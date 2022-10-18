@@ -9,6 +9,7 @@ import ru.practicum.shareit.user.model.User;
 import javax.print.attribute.standard.OrientationRequested;
 import javax.validation.Valid;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @Validated
@@ -16,19 +17,15 @@ public class ItemRepositoryImpl implements ItemRepository {
     private static long id = 0;
     private final Map<Long, List<Item>> items = new HashMap<>();
 
+
+
     @Override
     public Optional<Item> getItemByIdAll(long itemId) {
         Optional<Item> item = Optional.empty();
-        for (List<Item> i: items.values()) {
-            if(!i.isEmpty()) {
-                item = i.stream()
-                        .filter(g -> Objects.equals(itemId, g.getId()))
-                        .findAny();
-            }
-            if(item.isPresent()) {
-                break;
-            }
-        }
+        item = convertToList().stream()
+                .filter(g -> Objects.equals(itemId, g.getId()))
+                .findAny();
+
         return item;
     }
 
@@ -39,16 +36,9 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public Optional<Item> findItemById(long userId, long itemId) {
-        List<Item> itemsList = findByUserId(userId);
-        Optional<Item> i;
-        if(itemsList.isEmpty()){
-            i = Optional.empty();
-            return i;
-        } else {
-            return i = itemsList.stream()
-                    .filter(u -> Objects.equals(itemId, u.getId()))
-                    .findAny();
-        }
+        return findByUserId(userId).stream()
+                .filter(u -> Objects.equals(itemId, u.getId()))
+                .findAny();
     }
 
     @Override
@@ -89,10 +79,9 @@ public class ItemRepositoryImpl implements ItemRepository {
         List<Item> searchList = new ArrayList<>();
         for (List<Item> li: items.values()) {
             li.stream()
-                    .filter(i -> (i.getDescription().toLowerCase().contains(text.toLowerCase()) &&
-                    i.getAvailable() != false) ||
-                            (i.getName().toLowerCase().contains(text.toLowerCase()) &&
-                                    i.getAvailable() != false))
+                    .filter(i -> i.getAvailable() != false)
+                    .filter(i -> (i.getDescription().toLowerCase().contains(text.toLowerCase()) ||
+                            i.getName().toLowerCase().contains(text.toLowerCase())))
                     .forEach(i -> searchList.add(i));
         }
         return searchList;
@@ -100,5 +89,12 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     private long getId() {
         return ++id;
+    }
+
+    private List<Item> convertToList() {
+        List<Item> allItem = new ArrayList<>();
+        items.values().stream()
+                .forEach(i -> i.stream().forEach(f -> allItem.add(f)));
+        return allItem;
     }
 }
