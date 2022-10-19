@@ -3,9 +3,7 @@ package ru.practicum.shareit.user.repository;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.user.model.User;
-
 import javax.validation.Valid;
-import javax.validation.constraints.Email;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -45,11 +43,9 @@ public class UserRepositoryImpl implements UserRepository {
     }
     @Override
     public Optional<User> getById(Long userId) {
-        Optional<User> user = users.stream()
+        return users.stream()
                 .filter(u -> Objects.equals(userId, u.getId()))
                 .findAny();
-
-        return user;
     }
 
     private long getId() {

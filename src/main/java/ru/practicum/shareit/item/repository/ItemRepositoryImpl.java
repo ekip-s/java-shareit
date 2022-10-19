@@ -3,13 +3,8 @@ package ru.practicum.shareit.item.repository;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.model.User;
-
-
-import javax.print.attribute.standard.OrientationRequested;
 import javax.validation.Valid;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 @Validated
@@ -17,16 +12,11 @@ public class ItemRepositoryImpl implements ItemRepository {
     private static long id = 0;
     private final Map<Long, List<Item>> items = new HashMap<>();
 
-
-
     @Override
     public Optional<Item> getItemByIdAll(long itemId) {
-        Optional<Item> item = Optional.empty();
-        item = convertToList().stream()
+        return convertToList().stream()
                 .filter(g -> Objects.equals(itemId, g.getId()))
                 .findAny();
-
-        return item;
     }
 
     @Override
@@ -79,10 +69,10 @@ public class ItemRepositoryImpl implements ItemRepository {
         List<Item> searchList = new ArrayList<>();
         for (List<Item> li: items.values()) {
             li.stream()
-                    .filter(i -> i.getAvailable() != false)
+                    .filter(Item::getAvailable)
                     .filter(i -> (i.getDescription().toLowerCase().contains(text.toLowerCase()) ||
                             i.getName().toLowerCase().contains(text.toLowerCase())))
-                    .forEach(i -> searchList.add(i));
+                    .forEach(searchList::add);
         }
         return searchList;
     }
@@ -93,8 +83,8 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     private List<Item> convertToList() {
         List<Item> allItem = new ArrayList<>();
-        items.values().stream()
-                .forEach(i -> i.stream().forEach(f -> allItem.add(f)));
+        items.values()
+                .forEach(allItem::addAll);
         return allItem;
     }
 }

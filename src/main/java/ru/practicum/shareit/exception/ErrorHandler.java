@@ -25,5 +25,4 @@ public class ErrorHandler {
     public ErrorResponse handlerThrowable(final ConflictException e) {
         return new ErrorResponse(e.getMessage());
     }
-
 }

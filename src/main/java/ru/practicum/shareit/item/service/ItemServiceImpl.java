@@ -7,7 +7,6 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import javax.validation.Valid;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +36,7 @@ public class ItemServiceImpl implements ItemService {
     public Item getById(long userId, long itemId) {
         userExistenceCheck(userId);
         Optional<Item> item = repository.getItemByIdAll(itemId);
-        if(!item.isPresent()) {
+        if(item.isEmpty()) {
             throw new IllegalArgumentException("Нет вещи с id = " + itemId);
         }
         return item.get();
@@ -58,7 +57,7 @@ public class ItemServiceImpl implements ItemService {
             newItem.setAvailable(item.getAvailable());
         }
 
-        entityCheck(newItem);
+        entityCheck();
         repository.deleteByUserIdAndItemId(userId, item.getId());
         repository.update(newItem);
         return newItem;
@@ -79,20 +78,19 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
-
     private void userExistenceCheck(long id) {
-        if(!userRepository.getById(id).isPresent()) {
+        if(userRepository.getById(id).isEmpty()) {
             throw new IllegalArgumentException("Нет пользователя с id = " + id);
         }
     }
-    private void entityCheck(@Valid Item item) {
+    private void entityCheck() {
 
     }
 
     private Item getByIdInUser(long userId, long itemId) {
         userExistenceCheck(userId);
         Optional<Item> optionalItem = repository.findItemById(userId, itemId);
-        if(!optionalItem.isPresent()) {
+        if(optionalItem.isEmpty()) {
             throw new IllegalArgumentException("Нет вещи с id = " + itemId);
         } else {
             return optionalItem.get();
