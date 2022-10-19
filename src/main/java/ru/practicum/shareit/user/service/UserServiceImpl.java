@@ -6,8 +6,6 @@ import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
-
-
 import javax.validation.Valid;
 import java.util.List;
 
@@ -25,7 +23,11 @@ class UserServiceImpl implements UserService {
     @Override
     public User getById(Long userId) {
         userExistenceCheck(userId);
-        return repository.getById(userId).get();
+        if (repository.getById(userId).isPresent()) {
+            return repository.getById(userId).get();
+        } else {
+            return new User();
+        }
     }
 
     @Override
@@ -37,17 +39,21 @@ class UserServiceImpl implements UserService {
     @Override
     public User updateUser(User user, Long userId) {
         userExistenceCheck(userId);
-        User oldUser = repository.getById(userId).get();
-        if(user.getEmail() != null) {
-            entityCheck(user);
-            oldUser.setEmail(user.getEmail());
+        if(repository.getById(userId).isPresent()) {
+            User oldUser = repository.getById(userId).get();
+            if (user.getEmail() != null) {
+                entityCheck(user);
+                oldUser.setEmail(user.getEmail());
+            }
+            if (user.getName() != null) {
+                oldUser.setName(user.getName());
+            }
+            repository.delete(userId);
+            repository.update(oldUser);
+            return oldUser;
+        } else {
+            return new User();
         }
-        if(user.getName() != null) {
-            oldUser.setName(user.getName());
-        }
-        repository.delete(userId);
-        repository.update(oldUser);
-        return oldUser;
     }
 
     @Override
@@ -66,7 +72,7 @@ class UserServiceImpl implements UserService {
     }
 
     private void userExistenceCheck(long id) {
-        if(!repository.getById(id).isPresent()) {
+        if(repository.getById(id).isEmpty()) {
             throw new IllegalArgumentException("Нет пользователя с id = " + id);
         }
     }

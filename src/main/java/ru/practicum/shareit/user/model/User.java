@@ -10,7 +10,7 @@ import javax.validation.constraints.*;
 @AllArgsConstructor
 public class User {
     private Long id;
-    @Email(message = "Ошибка валидации: e-mail введен неправильно.")
+    @Email(message="Ошибка валидации: e-mail введен неправильно.")
     @NotNull(message="Ошибка валидации: e-mail не заполнен.")
     private String email;
     @NotBlank(message="Ошибка валидации: имя не заполнено.")
