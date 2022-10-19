@@ -42,11 +42,11 @@ class UserServiceImpl implements UserService {
         userExistenceCheck(userId);
         if(repository.getById(userId).isPresent()) {
             User oldUser = repository.getById(userId).get();
-            if (user.getEmail() != null) {
+            if(user.getEmail() != null) {
                 entityCheck(user);
                 oldUser.setEmail(user.getEmail());
             }
-            if (user.getName() != null) {
+            if(user.getName() != null) {
                 oldUser.setName(user.getName());
             }
             repository.delete(userId);
@@ -65,7 +65,7 @@ class UserServiceImpl implements UserService {
     private void entityCheck(@Valid User user) {
         if(!getAllUsers().isEmpty()) {
             for(User u: getAllUsers()) {
-                if (u.getEmail().equals(user.getEmail()) && !u.getId().equals(user.getId())) {
+                if(u.getEmail().equals(user.getEmail()) && !u.getId().equals(user.getId())) {
                     throw new ConflictException("Ошибка валидации: email уже используется.");
                 }
             }
