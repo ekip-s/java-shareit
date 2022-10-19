@@ -36,7 +36,7 @@ public class ItemServiceImpl implements ItemService {
     public Item getById(long userId, long itemId) {
         userExistenceCheck(userId);
         Optional<Item> item = repository.getItemByIdAll(itemId);
-        if(item.isEmpty()) {
+        if (item.isEmpty()) {
             throw new IllegalArgumentException("Нет вещи с id = " + itemId);
         }
         return item.get();
@@ -47,17 +47,16 @@ public class ItemServiceImpl implements ItemService {
         item.setId(itemId);
         userExistenceCheck(userId);
         Item newItem = getByIdInUser(userId, itemId);
-        if(item.getName() != null) {
+        if (item.getName() != null) {
             newItem.setName(item.getName());
         }
-        if(item.getDescription() != null) {
+        if (item.getDescription() != null) {
             newItem.setDescription(item.getDescription());
         }
-        if(item.getAvailable() != null) {
+        if (item.getAvailable() != null) {
             newItem.setAvailable(item.getAvailable());
         }
 
-        entityCheck();
         repository.deleteByUserIdAndItemId(userId, item.getId());
         return repository.update(newItem);
     }
@@ -78,18 +77,15 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private void userExistenceCheck(long id) {
-        if(userRepository.getById(id).isEmpty()) {
+        if (userRepository.getById(id).isEmpty()) {
             throw new IllegalArgumentException("Нет пользователя с id = " + id);
         }
-    }
-    private void entityCheck() {
-
     }
 
     private Item getByIdInUser(long userId, long itemId) {
         userExistenceCheck(userId);
         Optional<Item> optionalItem = repository.findItemById(userId, itemId);
-        if(optionalItem.isEmpty()) {
+        if (optionalItem.isEmpty()) {
             throw new IllegalArgumentException("Нет вещи с id = " + itemId);
         } else {
             return optionalItem.get();
