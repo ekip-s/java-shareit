@@ -40,21 +40,17 @@ class UserServiceImpl implements UserService {
     @Override
     public User updateUser(User user, Long userId) {
         userExistenceCheck(userId);
-        if(repository.getById(userId).isPresent()) {
-            User oldUser = repository.getById(userId).get();
-            if(user.getEmail() != null) {
-                entityCheck(user);
-                oldUser.setEmail(user.getEmail());
-            }
-            if(user.getName() != null) {
-                oldUser.setName(user.getName());
-            }
-            repository.delete(userId);
-            repository.update(oldUser);
-            return oldUser;
-        } else {
-            return new User();
+        User oldUser = repository.getById(userId).get();
+        if(user.getEmail() != null) {
+            entityCheck(user);
+            oldUser.setEmail(user.getEmail());
         }
+        if(user.getName() != null) {
+            oldUser.setName(user.getName());
+        }
+        repository.delete(userId);
+        repository.update(oldUser);
+        return oldUser;
     }
 
     @Override

@@ -42,6 +42,7 @@ public class UserRepositoryImpl implements UserRepository {
                 .filter(user -> !Objects.equals(userId, user.getId()))
                 .collect(Collectors.toList());
     }
+
     @Override
     public Optional<User> getById(Long userId) {
         return users.stream()
