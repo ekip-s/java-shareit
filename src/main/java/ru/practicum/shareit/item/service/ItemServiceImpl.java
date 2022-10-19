@@ -6,7 +6,6 @@ import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.repository.UserRepository;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +15,7 @@ import java.util.Optional;
 @Validated
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
+
     private final ItemRepository repository;
     private final UserRepository userRepository;
 
@@ -59,8 +59,7 @@ public class ItemServiceImpl implements ItemService {
 
         entityCheck();
         repository.deleteByUserIdAndItemId(userId, item.getId());
-        repository.update(newItem);
-        return newItem;
+        return repository.update(newItem);
     }
 
     @Override

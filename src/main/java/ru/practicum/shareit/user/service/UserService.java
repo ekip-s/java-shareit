@@ -5,6 +5,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 public interface UserService {
+
     List<User> getAllUsers();
     User getById(Long userId);
     User saveUser(@Valid User user);

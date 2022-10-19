@@ -9,6 +9,7 @@ import java.util.*;
 @Component
 @Validated
 public class ItemRepositoryImpl implements ItemRepository {
+
     private static long id = 0;
     private final Map<Long, List<Item>> items = new HashMap<>();
 

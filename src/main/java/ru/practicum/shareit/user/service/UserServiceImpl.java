@@ -13,6 +13,7 @@ import java.util.List;
 @Validated
 @RequiredArgsConstructor
 class UserServiceImpl implements UserService {
+
     private final UserRepository repository;
 
     @Override
