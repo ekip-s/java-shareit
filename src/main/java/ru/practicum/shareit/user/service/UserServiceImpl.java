@@ -41,12 +41,12 @@ class UserServiceImpl implements UserService {
     public User updateUser(User user, Long userId) {
         userExistenceCheck(userId);
         User oldUser = repository.getById(userId).get();
-        if(user.getEmail() != null) {
+        if (user.getEmail() != null) {
             entityCheck(user);
             oldUser.setEmail(user.getEmail());
         }
 
-        if(user.getName() != null) {
+        if (user.getName() != null) {
             oldUser.setName(user.getName());
         }
 
@@ -61,19 +61,17 @@ class UserServiceImpl implements UserService {
     }
 
     private void entityCheck(@Valid User user) {
-        if(!getAllUsers().isEmpty()) {
-            for(User u: getAllUsers()) {
-                if(u.getEmail().equals(user.getEmail()) && !u.getId().equals(user.getId())) {
+        if (!getAllUsers().isEmpty()) {
+            for (User u: getAllUsers()) {
+                if (u.getEmail().equals(user.getEmail()) && !u.getId().equals(user.getId())) {
                     throw new ConflictException("Ошибка валидации: email уже используется.");
                 }
             }
-
         }
-
     }
 
     private void userExistenceCheck(long id) {
-        if(repository.getById(id).isEmpty()) {
+        if (repository.getById(id).isEmpty()) {
             throw new IllegalArgumentException("Нет пользователя с id = " + id);
         }
     }
