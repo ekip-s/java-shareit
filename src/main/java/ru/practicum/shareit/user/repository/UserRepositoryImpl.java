@@ -9,9 +9,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 @Component
 @Validated
 public class UserRepositoryImpl implements UserRepository {
+
     private List<User> users = new ArrayList<>();
     private static long id = 0;
 
