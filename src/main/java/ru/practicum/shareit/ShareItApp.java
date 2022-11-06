@@ -8,13 +8,6 @@ import ru.practicum.shareit.user.service.UserServiceJPA;
 @SpringBootApplication
 public class ShareItApp {
 
-	static UserServiceJPA userServiceJPA;
-
-    @Autowired
-	public ShareItApp(UserServiceJPA userServiceJPA) {
-		this.userServiceJPA = userServiceJPA;
-	}
-
 	public static void main(String[] args) {
 		SpringApplication.run(ShareItApp.class, args);
 	}
