@@ -9,6 +9,8 @@ import java.util.List;
 
 @Repository
 public interface ItemRepositoryJPA extends JpaRepository<Item, Long> {
+
     List<Item> findByNameOrDescriptionContainingIgnoreCaseAndAvailableTrue(String searchQuery, String searchQuery2);
+
     List<Item> findByOwner(User owner);
 }

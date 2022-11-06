@@ -172,7 +172,7 @@ public class BookingService {
     }
 
     private List<Booking> truncateResponse(List<Booking> bookings) {
-        for(Booking b: bookings) {
+        for (Booking b: bookings) {
             b.truncateResponse();
         }
         return bookings;
@@ -199,7 +199,7 @@ public class BookingService {
     }
 
     private void checkUserAndStatus(long userId, long ownerId, Booking booking) {
-        if (userId != ownerId){
+        if (userId != ownerId) {
             throw new IllegalArgumentException("Обновить статус может только владелец товара.");
         } else if (booking.getStatus() != BookingStatus.WAITING) {
             throw new IllegalArgumentException("Статус обновлен ранее, текущий статус: " + booking.getStatus());

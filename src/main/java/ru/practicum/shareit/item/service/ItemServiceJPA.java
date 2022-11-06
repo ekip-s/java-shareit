@@ -8,9 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepositoryJPA;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.repository.UserRepositoryJPA;
 import ru.practicum.shareit.user.service.UserServiceJPA;
-
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
