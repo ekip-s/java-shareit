@@ -35,25 +35,25 @@ public class ItemRepositoryImpl implements ItemRepository {
     @Override
     public Item save(@Valid Item item) {
         item.setId(getId());
-        items.compute(item.getUserId(), (userId, userItems) -> {
+        /*items.compute(item.getUserId(), (userId, userItems) -> {
             if (userItems == null) {
                 userItems = new ArrayList<>();
             }
             userItems.add(item);
             return userItems;
-        });
+        });*/
         return item;
     }
 
     @Override
     public Item update(@Valid Item item) {
-        items.compute(item.getUserId(), (userId, userItems) -> {
+        /*items.compute(item.getUserId(), (userId, userItems) -> {
             if (userItems == null) {
                 userItems = new ArrayList<>();
             }
             userItems.add(item);
             return userItems;
-        });
+        });*/
         return item;
     }
 

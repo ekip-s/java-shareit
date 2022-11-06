@@ -6,6 +6,8 @@ import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.repository.UserRepository;
+
+import javax.validation.Valid;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -26,9 +28,9 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item addNewItem(long userId, Item item) {
+    public Item addNewItem(long userId, @Valid Item item) {
         userExistenceCheck(userId);
-        item.setUserId(userId);
+        //item.setUserId(userId);
         return repository.save(item);
     }
 
