@@ -63,6 +63,8 @@ public class ItemController {
     public CommentDto addComment(@RequestHeader(SHARER_USER_ID) Long userId,
                                  @PathVariable Long itemId,
                                  @RequestBody Comment comment) {
+        log.info("Получен POST запрос к эндпоинту: '/items/itemId={}/comment'," +
+                " Строка параметров запроса: userId={}, comment={}", itemId, userId, comment);
         return itemService.addComment(userId, itemId, comment);
     }
 }
