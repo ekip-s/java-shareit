@@ -1,13 +1,12 @@
 package ru.practicum.shareit.booking.model;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
-
 import javax.validation.constraints.Future;
-import java.util.Date;
+import java.time.LocalDateTime;
+
 
 @Data
 @NoArgsConstructor
@@ -17,9 +16,9 @@ public class BookingDto {
     private long id;
     @Future(message = "Дата должна быть в будущем.")
     @DateTimeFormat(pattern = "yyyy-MM-ddTHH:mm:ss")
-    private Date start;
+    private LocalDateTime start;
     @Future(message = "Дата должна быть в будущем.")
     @DateTimeFormat(pattern = "yyyy-MM-ddTHH:mm:ss")
-    private Date end;
+    private LocalDateTime end;
     private long itemId;
 }

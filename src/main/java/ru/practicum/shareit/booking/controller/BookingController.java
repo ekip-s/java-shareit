@@ -1,14 +1,14 @@
-package ru.practicum.shareit.booking;
+package ru.practicum.shareit.booking.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
+import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.booking.service.BookingServiceJPA;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingDto;
-
 import javax.validation.Valid;
 import java.util.List;
 
@@ -24,7 +24,7 @@ public class BookingController {
     BookingService bookingService;
 
     @Autowired
-    public BookingController(BookingService bookingService) {
+    public BookingController(BookingServiceJPA bookingService) {
         this.bookingService = bookingService;
     }
 
@@ -49,14 +49,14 @@ public class BookingController {
     @GetMapping()
     public List<Booking> getBookings(@RequestHeader(SHARER_USER_ID) Long userId,
                                      @RequestParam(required = false, defaultValue = "ALL")
-                                         String state) {
+                                     RequestParameters state) {
         return bookingService.getBookings(userId, state);
     }
 
     @GetMapping("/owner")
     public List<Booking> getBookingsOwner(@RequestHeader(SHARER_USER_ID) Long userId,
                                      @RequestParam(required = false, defaultValue = "ALL")
-                                     String state) {
+                                     RequestParameters state) {
         return bookingService.getBookingsOwner(userId, state);
     }
 }

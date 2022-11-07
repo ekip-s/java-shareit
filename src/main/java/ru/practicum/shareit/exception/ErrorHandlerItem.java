@@ -28,4 +28,10 @@ public class ErrorHandlerItem {
     public ErrorResponse handlerIllegalArgumentException(final IllegalArgumentException e) {
         return new ErrorResponse(e.getMessage());
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handlerConflict(final ConflictException e) {
+        return new ErrorResponse(e.getMessage());
+    }
 }

@@ -6,10 +6,11 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.validation.ConstraintViolationException;
 
-@RestControllerAdvice("ru.practicum.shareit.booking")
+@RestControllerAdvice("ru.practicum.shareit.booking") //ru.practicum.shareit.booking  ru.practicum.shareit.exception
 public class ErrorHandlerBooking {
 
     @ExceptionHandler
@@ -42,5 +43,9 @@ public class ErrorHandlerBooking {
         return new ErrorResponse(e.getFieldError().getDefaultMessage());
     }
 
-
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse MethodArgument(final MethodArgumentTypeMismatchException e) {
+        return new ErrorResponse("Unknown state: " + e.getValue().toString());
+    }
 }

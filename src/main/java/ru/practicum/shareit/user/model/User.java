@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -36,6 +37,10 @@ public class User {
     @Transient
     @OneToMany(mappedBy = "booker")
     private  List<Booking> bookings;
+
+    @Transient
+    @OneToMany(mappedBy = "author")
+    private List<Comment> comments;
 
     public User(String email, String name) {
         this.email = email;

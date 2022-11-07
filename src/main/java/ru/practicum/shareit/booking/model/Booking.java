@@ -8,7 +8,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 import javax.persistence.*;
 import javax.validation.constraints.Future;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -23,20 +23,18 @@ public class Booking {
     private long id;
 
     @Future(message = "Дата должна быть в будущем.")
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "start_dt")
     @DateTimeFormat(pattern = "yyyy-MM-ddTHH:mm:ss")
-    private Date start;
+    private LocalDateTime start;
 
     @Future(message = "Дата должна быть в будущем.")
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "end_dt")
     @DateTimeFormat(pattern = "yyyy-MM-ddTHH:mm:ss")
-    private Date end;
+    private LocalDateTime end;
 
     @ManyToOne
     @JoinColumn(name = "item_id", referencedColumnName = "id")
-    private Item itemId;
+    private Item item;
 
     @ManyToOne
     @JoinColumn(name = "booker", referencedColumnName = "id")
@@ -45,16 +43,16 @@ public class Booking {
     @Enumerated(EnumType.ORDINAL)
     private BookingStatus status;
 
-    public Booking(Date start, Date end, Item itemId, User booker) {
+    public Booking(LocalDateTime start, LocalDateTime end, Item item, User booker) {
         this.start = start;
         this.end = end;
-        this.itemId = itemId;
+        this.item = item;
         this.booker = booker;
         this.status = BookingStatus.WAITING;
     }
 
     public void truncateResponse() {
-        itemId.setOwner(null);
+        item.setOwner(null);
         booker.setEmail("");
         booker.setName("");
     }

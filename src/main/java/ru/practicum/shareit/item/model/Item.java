@@ -4,12 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Optional;
 
 @Data
 @NoArgsConstructor
@@ -40,11 +42,24 @@ public class Item {
     private User owner;
 
     @Transient
-    @OneToMany(mappedBy = "itemId")
+    @OneToMany(mappedBy = "item")
     private List<Booking> bookings;
+
+    @Transient
+    @OneToMany(mappedBy = "item")
+    private List<Comment> comments;
 
     public Item(String name, String description) {
         this.name = name;
         this.description = description;
+    }
+
+    public Item getItemOfDto(ItemDto itemDto) {
+        this.id = itemDto.getId();
+        this.name = itemDto.getName();
+        this.description = itemDto.getDescription();
+        this.available = itemDto.getAvailable();
+        this.owner = itemDto.getOwner();
+        return this;
     }
 }
