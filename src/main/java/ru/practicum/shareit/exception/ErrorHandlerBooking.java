@@ -10,7 +10,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import javax.validation.ConstraintViolationException;
 
-@RestControllerAdvice("ru.practicum.shareit.booking") //ru.practicum.shareit.booking  ru.practicum.shareit.exception
+@RestControllerAdvice("ru.practicum.shareit.booking")
 public class ErrorHandlerBooking {
 
     @ExceptionHandler
@@ -45,7 +45,7 @@ public class ErrorHandlerBooking {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse MethodArgument(final MethodArgumentTypeMismatchException e) {
+    public ErrorResponse methodArgument(final MethodArgumentTypeMismatchException e) {
         return new ErrorResponse("Unknown state: " + e.getValue().toString());
     }
 }

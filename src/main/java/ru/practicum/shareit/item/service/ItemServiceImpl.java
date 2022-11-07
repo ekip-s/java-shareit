@@ -3,7 +3,6 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Comment;
@@ -35,7 +34,8 @@ public class ItemServiceImpl implements ItemService {
     private List<ItemDto> ItemDtoList(List<Item> items) {
         List<ItemDto> itemDtoList = new ArrayList<>();
         for (Item i: items) {
-            itemDtoList.add(new ItemDto().toItemDto(i, Optional.empty(), Optional.empty(), new ArrayList<>()));
+            itemDtoList.add(new ItemDto().toItemDto(i, Optional.empty(), Optional.empty(),
+                    new ArrayList<>()));
         }
         return itemDtoList;
     }

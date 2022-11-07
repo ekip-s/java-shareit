@@ -49,7 +49,7 @@ public class ItemServiceJPA implements ItemService {
 
     @Override
     public List<ItemDto> getItems(long userId) {
-        return ItemDtoList(itemRepositoryJPA.findByOwner(new User(userId)), userId);
+        return itemDtoList(itemRepositoryJPA.findByOwner(new User(userId)), userId);
     }
 
     @Override
@@ -131,7 +131,7 @@ public class ItemServiceJPA implements ItemService {
         }
     }
 
-    private List<ItemDto> ItemDtoList(List<Item> items, long userId) {
+    private List<ItemDto> itemDtoList(List<Item> items, long userId) {
         List<ItemDto> itemDtoList = new ArrayList<>();
         for (Item i: items) {
             itemDtoList.add(toItemDto(i, userId));
@@ -149,7 +149,7 @@ public class ItemServiceJPA implements ItemService {
     private List<CommentDto> toCommentDtoList(Item item) {
         List<CommentDto> commentDtoList = new ArrayList<>();
         List<Comment> comments = commentRepositoryJPA.findByItemOrderByCreated(item);
-        for(Comment c: comments) {
+        for (Comment c: comments) {
             commentDtoList.add(new CommentDto().toCommentDto(c));
         }
         return commentDtoList;
