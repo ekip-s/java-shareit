@@ -28,10 +28,10 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemDto> getItems(long userId) {
         userExistenceCheck(userId);
-        return ItemDtoList(repository.findByUserId(userId));
+        return itemDtoList(repository.findByUserId(userId));
     }
 
-    private List<ItemDto> ItemDtoList(List<Item> items) {
+    private List<ItemDto> itemDtoList(List<Item> items) {
         List<ItemDto> itemDtoList = new ArrayList<>();
         for (Item i: items) {
             itemDtoList.add(new ItemDto().toItemDto(i, Optional.empty(), Optional.empty(),
