@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-import ru.practicum.shareit.booking.controller.RequestParameters;
+import ru.practicum.shareit.booking.model.RequestParameters;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingDto;
 import ru.practicum.shareit.booking.model.BookingStatus;
@@ -206,9 +206,9 @@ public class BookingServiceJPA implements BookingService {
         if (optionalItem.isEmpty()) {
             throw new IllegalArgumentException("Такого товара нет");
         } else if (userId == optionalItem.get().getOwner().getId()) {
-            throw new IllegalArgumentException("Нельзя забронировать свой товар.");
+            throw new IllegalArgumentException("Нельзя забронировать не свой товар.");
         } else if (!optionalItem.get().getAvailable()) {
-            throw new ConflictException("Товар сейчас не доступер, выберите другой");
+            throw new ConflictException("Товар сейчас не доступен, выберите другой");
         } else if (booking.getStart().isAfter(booking.getEnd())) {
             throw new ConflictException("Дата окончания бронирования, должна быть раньше старта блонирования.");
         }

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.booking.model.RequestParameters;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.booking.service.BookingServiceJPA;
 import ru.practicum.shareit.booking.model.Booking;
@@ -20,7 +21,7 @@ import java.util.List;
 public class BookingController {
 
     private static final String SHARER_USER_ID = "X-Sharer-User-Id";
-    BookingService bookingService;
+    private BookingService bookingService;
 
     @Autowired
     public BookingController(BookingServiceJPA bookingService) {

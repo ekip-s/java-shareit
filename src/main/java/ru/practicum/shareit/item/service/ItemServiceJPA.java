@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Primary
@@ -49,7 +50,7 @@ public class ItemServiceJPA implements ItemService {
 
     @Override
     public List<ItemDto> getItems(long userId) {
-        return itemDtoList(itemRepositoryJPA.findByOwner(new User(userId)), userId);
+        return itemDtoList(itemRepositoryJPA.findByOwnerOrderById(new User(userId)), userId);
     }
 
     @Override
@@ -99,6 +100,7 @@ public class ItemServiceJPA implements ItemService {
         }
     }
 
+    @Transactional
     @Override
     public CommentDto addComment(long userId, long itemId, Comment comment) {
         User user = userServiceJPA.getById(userId);
@@ -132,11 +134,9 @@ public class ItemServiceJPA implements ItemService {
     }
 
     private List<ItemDto> itemDtoList(List<Item> items, long userId) {
-        List<ItemDto> itemDtoList = new ArrayList<>();
-        for (Item i: items) {
-            itemDtoList.add(toItemDto(i, userId));
-        }
-        return itemDtoList;
+        return items.stream()
+                .map(i -> toItemDto(i, userId))
+                .collect(Collectors.toList());
     }
 
     private void verificationCompletedBooking(User user, Item item) {
@@ -147,11 +147,9 @@ public class ItemServiceJPA implements ItemService {
     }
 
     private List<CommentDto> toCommentDtoList(Item item) {
-        List<CommentDto> commentDtoList = new ArrayList<>();
-        List<Comment> comments = commentRepositoryJPA.findByItemOrderByCreated(item);
-        for (Comment c: comments) {
-            commentDtoList.add(new CommentDto().toCommentDto(c));
-        }
-        return commentDtoList;
+        return commentRepositoryJPA.findByItemOrderByCreated(item)
+                .stream()
+                .map(c -> new CommentDto().toCommentDto(c))
+                .collect(Collectors.toList());
     }
 }

@@ -21,12 +21,13 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_name")
+    @Column(name = "email")
     @Email(message = "Ошибка валидации: e-mail введен неправильно.")
     @NotNull(message = "Ошибка валидации: e-mail не заполнен.")
     private String email;
 
-    @Column(name = "email")
+
+    @Column(name = "user_name")
     @NotBlank(message = "Ошибка валидации: имя не заполнено.")
     private String name;
 

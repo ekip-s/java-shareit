@@ -1,7 +1,6 @@
 package ru.practicum.shareit.exception;
 
-
-import org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException;
+import org.postgresql.util.PSQLException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -26,7 +25,7 @@ public class ErrorHandlerUser {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handlerDBConflict(final JdbcSQLIntegrityConstraintViolationException e) {
+    public ErrorResponse handlerDBConflict(final PSQLException e) {
         return new ErrorResponse(e.getMessage());
     }
 

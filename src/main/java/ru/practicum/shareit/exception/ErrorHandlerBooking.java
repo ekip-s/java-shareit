@@ -1,6 +1,5 @@
 package ru.practicum.shareit.exception;
 
-import org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,12 +15,6 @@ public class ErrorHandlerBooking {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handlerConflict(final ConflictException e) {
-        return new ErrorResponse(e.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handlerBDConflict(final JdbcSQLIntegrityConstraintViolationException e) {
         return new ErrorResponse(e.getMessage());
     }
 
