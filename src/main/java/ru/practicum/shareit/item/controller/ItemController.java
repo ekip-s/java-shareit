@@ -3,6 +3,9 @@ package ru.practicum.shareit.item.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 
@@ -18,13 +21,13 @@ public class ItemController {
     private static final String SHARER_USER_ID = "X-Sharer-User-Id";
 
     @GetMapping
-    public List<Item> get(@RequestHeader(SHARER_USER_ID) long userId) {
+    public List<ItemDto> get(@RequestHeader(SHARER_USER_ID) long userId) {
         return itemService.getItems(userId);
     }
 
     @GetMapping("/{itemId}")
-    public Item getById(@RequestHeader(SHARER_USER_ID) Long userId,
-                        @PathVariable Long itemId) {
+    public ItemDto getById(@RequestHeader(SHARER_USER_ID) Long userId,
+                           @PathVariable Long itemId) {
         return itemService.getById(userId, itemId);
     }
 
@@ -49,10 +52,19 @@ public class ItemController {
     }
 
     @DeleteMapping("/{itemId}")
-    public void deleteItem(@RequestHeader(SHARER_USER_ID) long userId,
-                           @PathVariable long itemId) {
+    public void deleteItem(@RequestHeader(SHARER_USER_ID) Long userId,
+                           @PathVariable Long itemId) {
         log.info("Получен DELETE запрос к эндпоинту: '/items', Строка параметров запроса: userId={}, itemId={}",
                 userId, itemId);
         itemService.deleteItem(userId, itemId);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDto addComment(@RequestHeader(SHARER_USER_ID) Long userId,
+                                 @PathVariable Long itemId,
+                                 @RequestBody Comment comment) {
+        log.info("Получен POST запрос к эндпоинту: '/items/itemId={}/comment'," +
+                " Строка параметров запроса: userId={}, comment={}", itemId, userId, comment);
+        return itemService.addComment(userId, itemId, comment);
     }
 }
