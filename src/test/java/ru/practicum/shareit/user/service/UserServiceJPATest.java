@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.user.model.User;
+
+import javax.validation.ConstraintViolationException;
 import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -64,6 +66,18 @@ class UserServiceJPATest {
         User testUser2 = userServiceJPA.getById(testUser.getId());
         assertThat(testUser2.getName(), equalTo("name_user"));
         assertThat(testUser2.getEmail(), equalTo("test@mail.ru"));
+
+        Throwable thrown2 = assertThrows(ConstraintViolationException.class, () -> {
+            userServiceJPA.saveUser(new User("testmail.ru", "name_user157"));
+        });
+        assertThat(thrown2.getMessage(),
+                equalTo("saveUser.user.email: Ошибка валидации: e-mail введен неправильно."));
+
+        Throwable thrown3 = assertThrows(ConstraintViolationException.class, () -> {
+            userServiceJPA.saveUser(new User("test@mail.ru", null));
+        });
+        assertThat(thrown3.getMessage(),
+                equalTo("saveUser.user.name: Ошибка валидации: имя не заполнено."));
     }
 
     @Test
