@@ -17,6 +17,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserServiceJPA;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -97,11 +98,35 @@ class BookingServiceJPATest {
     }
 
     @Test
+    void getById_2() {
+        Booking newBooking = bookingServiceJPA.addBooking(user2.getId(), bookingDto);
+        Booking booking3 = bookingServiceJPA.getById(newBooking.getId());
+
+        assertThat(booking3.getId(), notNullValue());
+        assertThat(booking3.getStart(), notNullValue());
+        assertThat(booking3.getEnd(), notNullValue());
+        assertThat(booking3.getItem().getName(), equalTo("Стул"));
+        assertThat(booking3.getItem().getDescription(), equalTo("на четырех ножках"));
+        assertThat(booking3.getItem().getAvailable(), equalTo(true));
+        assertThat(booking3.getStatus(), equalTo(BookingStatus.WAITING));
+    }
+
+    @Test
     void getBookings() {
         Booking newBooking = bookingServiceJPA.addBooking(user2.getId(), bookingDto);
         List<Booking> bookingList = bookingServiceJPA.getBookings(user2.getId(), RequestParameters.ALL);
         assertThat(bookingList.isEmpty(), equalTo(false));
         List<Booking> bookingList2 = bookingServiceJPA.getBookings(user2.getId(), RequestParameters.PAST);
+        assertThat(bookingList2.isEmpty(), equalTo(true));
+    }
+
+    @Test
+    void getBookingsPage() {
+        Booking newBooking = bookingServiceJPA.addBooking(user2.getId(), bookingDto);
+        List<Booking> bookingList = bookingServiceJPA.getBookings(user2.getId(), RequestParameters.ALL, 0, 1);
+        assertThat(bookingList.isEmpty(), equalTo(false));
+        List<Booking> bookingList2 = bookingServiceJPA.getBookings(user2.getId(),
+                RequestParameters.PAST, 0, 1);
         assertThat(bookingList2.isEmpty(), equalTo(true));
     }
 
@@ -115,5 +140,32 @@ class BookingServiceJPATest {
         assertThat(bookings.isEmpty(), equalTo(true));
         List<Booking> bookings2 = bookingServiceJPA.getBookingsOwner(user.getId(), RequestParameters.ALL);
         assertThat(bookings2.isEmpty(), equalTo(false));
+    }
+
+    @Test
+    void getBookingsOwnerPage() {
+        User newUser = userServiceJPA.saveUser(new User("pochta3@mail.ru", "Valera3"));
+
+        Booking newBooking = bookingServiceJPA.addBooking(newUser.getId(), bookingDto);
+        List<Booking> bookings = bookingServiceJPA.getBookingsOwner(newUser.getId(),
+                RequestParameters.ALL, 0, 1);
+        assertThat(bookings.isEmpty(), equalTo(true));
+        List<Booking> bookings2 = bookingServiceJPA.getBookingsOwner(user.getId(),
+                RequestParameters.ALL, 0, 1);
+        assertThat(bookings2.isEmpty(), equalTo(false));
+    }
+
+    @Test
+    void lastBooking() {
+        Item itemLastBooking = new Item(itemDto.getId());
+        Optional<Booking> optionalBooking = bookingServiceJPA.lastBooking(itemLastBooking);
+        assertThat(optionalBooking.isEmpty(), equalTo(true));
+    }
+
+    @Test
+    void nextBooking() {
+        Item itemNextBooking = new Item(itemDto.getId());
+        Optional<Booking> optionalBooking = bookingServiceJPA.nextBooking(itemNextBooking);
+        assertThat(optionalBooking.isEmpty(), equalTo(true));
     }
 }

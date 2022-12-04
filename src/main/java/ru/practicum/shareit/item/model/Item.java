@@ -62,4 +62,8 @@ public class Item {
         this.description = description;
         this.requestId = new ItemRequest(requestId);
     }
+
+    public Item(Long id) {
+        this.id = id;
+    }
 }
