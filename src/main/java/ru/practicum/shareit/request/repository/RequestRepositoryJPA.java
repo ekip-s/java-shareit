@@ -12,5 +12,6 @@ import java.util.List;
 public interface RequestRepositoryJPA extends JpaRepository<ItemRequest, Long> {
 
     List<ItemRequest> findByRequestAuthorOrderByCreationDate(User user);
+
     Page<ItemRequest> findByRequestAuthorNot(User user, Pageable pageable);
 }
