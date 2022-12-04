@@ -51,10 +51,11 @@ public class Booking {
         this.status = BookingStatus.WAITING;
     }
 
-    public void truncateResponse() {
+    public Booking truncateResponse() {
         item.setOwner(null);
         booker.setEmail("");
         booker.setName("");
+        return this;
     }
 
 

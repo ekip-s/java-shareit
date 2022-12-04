@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
@@ -37,6 +38,10 @@ public class Item {
     private Boolean available;
 
     @ManyToOne
+    @JoinColumn(name = "request_id", referencedColumnName = "id")
+    private ItemRequest requestId;
+
+    @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User owner;
 
@@ -53,12 +58,9 @@ public class Item {
         this.description = description;
     }
 
-    public Item getItemOfDto(ItemDto itemDto) {
-        this.id = itemDto.getId();
-        this.name = itemDto.getName();
-        this.description = itemDto.getDescription();
-        this.available = itemDto.getAvailable();
-        this.owner = itemDto.getOwner();
-        return this;
+    public Item(String name, String description, Long requestId) {
+        this.name = name;
+        this.description = description;
+        this.requestId = new ItemRequest(requestId);
     }
 }

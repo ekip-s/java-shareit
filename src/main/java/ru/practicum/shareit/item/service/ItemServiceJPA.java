@@ -2,6 +2,10 @@ package ru.practicum.shareit.item.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -29,11 +33,11 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class ItemServiceJPA implements ItemService {
 
-    ItemRepositoryJPA itemRepositoryJPA;
-    UserServiceJPA userServiceJPA;
-    BookingServiceJPA bookingService;
-    BookingRepositoryJPA bookingRepositoryJPA;
-    CommentRepositoryJPA commentRepositoryJPA;
+    private final ItemRepositoryJPA itemRepositoryJPA;
+    private final UserServiceJPA userServiceJPA;
+    private final BookingServiceJPA bookingService;
+    private final BookingRepositoryJPA bookingRepositoryJPA;
+    private final CommentRepositoryJPA commentRepositoryJPA;
 
     @Autowired
     public ItemServiceJPA(ItemRepositoryJPA itemRepositoryJPA,
@@ -54,24 +58,32 @@ public class ItemServiceJPA implements ItemService {
     }
 
     @Override
+    public List<ItemDto> getItems(long userId, int from, int size) {
+        checkPaginationParams(from, size);
+        from = from/size;
+        Pageable page = PageRequest.of(from, size, Sort.by("id").descending());
+        return itemDtoListPage(itemRepositoryJPA.findByOwner(new User(userId), page), userId);
+    }
+
+
+
+    @Override
     public ItemDto getById(long userId, long itemId) {
-        Optional<Item> item = itemRepositoryJPA.findById(itemId);
-        checkEntity(item, itemId);
-        return toItemDto(item.get(), userId);
+        return toItemDto(checkEntity(itemRepositoryJPA.findById(itemId)), userId);
     }
 
     @Transactional
     @Override
-    public Item addNewItem(long userId, @Valid Item item) {
+    public ItemDto addNewItem(long userId, @Valid Item item) {
         userServiceJPA.getById(userId);
         item.setOwner(new User(userId));
-        return itemRepositoryJPA.save(item);
+        return new ItemDto().toItemDto(itemRepositoryJPA.save(item));
     }
 
     @Transactional
     @Override
     public Item updateItem(long userId, Item item, long itemId) {
-        Item initialItem = new Item().getItemOfDto(getById(userId, itemId));
+        Item initialItem = checkEntity(itemRepositoryJPA.findById(itemId));
         checkOwner(userId, initialItem.getOwner().getId());
         if (item.getName() != null) {
             initialItem.setName(item.getName());
@@ -92,11 +104,25 @@ public class ItemServiceJPA implements ItemService {
     }
 
     @Override
-    public List<Item> searchItem(long userId, String text) {
+    public List<ItemDto> searchItem(long userId, String text) {
         if (text.isBlank()) {
             return new ArrayList<>();
         } else {
-            return itemRepositoryJPA.findByNameOrDescriptionContainingIgnoreCaseAndAvailableTrue(text, text);
+            return itemDtoList(itemRepositoryJPA.findByNameOrDescriptionContainingIgnoreCaseAndAvailableTrue(text,
+                    text), userId);
+        }
+    }
+
+    @Override
+    public List<ItemDto> searchItem(long userId, String text, int from, int size) {
+        checkPaginationParams(from, size);
+        from = from/size;
+        Pageable page = PageRequest.of(from, size, Sort.by("id").descending());
+        if (text.isBlank()) {
+            return new ArrayList<>();
+        } else {
+            return itemDtoListPage(itemRepositoryJPA.findByNameOrDescriptionContainingIgnoreCaseAndAvailableTrue(
+                    text, text, page), userId);
         }
     }
 
@@ -104,19 +130,21 @@ public class ItemServiceJPA implements ItemService {
     @Override
     public CommentDto addComment(long userId, long itemId, Comment comment) {
         User user = userServiceJPA.getById(userId);
-        Optional<Item> itemOptional = itemRepositoryJPA.findById(itemId);
-        checkEntity(itemOptional, itemId);
-        Item item = itemOptional.get();
+        Item item = checkEntity(itemRepositoryJPA.findById(itemId));
         verificationCompletedBooking(user, item);
         comment.setItemAndAuthor(item, user);
         commentRepositoryJPA.save(comment);
         return new CommentDto().toCommentDto(comment);
     }
 
-    private void checkEntity(Optional<Item> item, Long itemId) {
-        if (item.isEmpty())
-            throw new IllegalArgumentException("Нет товара с id =" + itemId);
+    private Item checkEntity(Optional<Item> item) {
+        if (item.isEmpty()) {
+            throw new IllegalArgumentException("Нет товара с таким id.");
+        } else {
+            return item.get();
+        }
     }
+
 
     private void checkOwner(long id, long itemUserId) {
         if (id != itemUserId) {
@@ -139,6 +167,12 @@ public class ItemServiceJPA implements ItemService {
                 .collect(Collectors.toList());
     }
 
+    private List<ItemDto> itemDtoListPage(Page<Item> items, long userId) {
+        return items.stream()
+                .map(i -> toItemDto(i, userId))
+                .collect(Collectors.toList());
+    }
+
     private void verificationCompletedBooking(User user, Item item) {
         if (bookingRepositoryJPA.findByBookerAndItemAndEndBefore(user,
                 item, LocalDateTime. now()).isEmpty()) {
@@ -151,5 +185,13 @@ public class ItemServiceJPA implements ItemService {
                 .stream()
                 .map(c -> new CommentDto().toCommentDto(c))
                 .collect(Collectors.toList());
+    }
+
+    private void checkPaginationParams(int from, int size) {
+        if (from < 0) {
+            throw new ConflictException("Параметр from не может быть отрицательным.");
+        } else if (size < 1) {
+            throw new ConflictException("Параметр size должен быть больше нуля.");
+        }
     }
 }

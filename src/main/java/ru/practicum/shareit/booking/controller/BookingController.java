@@ -52,14 +52,26 @@ public class BookingController {
     @GetMapping()
     public List<Booking> getBookings(@RequestHeader(SHARER_USER_ID) Long userId,
                                      @RequestParam(required = false, defaultValue = "ALL")
-                                     RequestParameters state) {
-        return bookingService.getBookings(userId, state);
+                                     RequestParameters state,
+                                     @RequestParam(required = false) Integer from,
+                                     @RequestParam(required = false) Integer size) {
+        if (from == null || size == null) {
+            return bookingService.getBookings(userId, state);
+        } else {
+            return bookingService.getBookings(userId, state, from, size);
+        }
     }
 
     @GetMapping("/owner")
     public List<Booking> getBookingsOwner(@RequestHeader(SHARER_USER_ID) Long userId,
                                      @RequestParam(required = false, defaultValue = "ALL")
-                                     RequestParameters state) {
-        return bookingService.getBookingsOwner(userId, state);
+                                     RequestParameters state,
+                                          @RequestParam(required = false) Integer from,
+                                          @RequestParam(required = false) Integer size) {
+        if (from == null || size == null) {
+            return bookingService.getBookingsOwner(userId, state);
+        } else {
+            return bookingService.getBookingsOwner(userId, state, from, size);
+        }
     }
 }

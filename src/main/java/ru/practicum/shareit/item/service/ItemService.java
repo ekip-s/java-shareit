@@ -10,7 +10,11 @@ import java.util.List;
 
 public interface ItemService {
 
-    Item addNewItem(long userId, @Valid Item item);
+    ItemDto addNewItem(long userId, @Valid Item item);
+
+    List<ItemDto> getItems(long userId,int from, int size);
+
+    List<ItemDto> searchItem(long userId, String text, int from, int size);
 
     Item updateItem(long userId, Item item, long itemId);
 
@@ -20,7 +24,7 @@ public interface ItemService {
 
     void deleteItem(long userId, long itemId);
 
-    List<Item> searchItem(long userId, String text);
+    List<ItemDto> searchItem(long userId, String text);
 
     CommentDto addComment(long userId, long itemId, Comment comment);
 }

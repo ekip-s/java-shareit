@@ -6,7 +6,8 @@ import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.LastAndNextDto;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.model.UserDTO;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -19,12 +20,36 @@ public class ItemDto {
     private String name;
     private String description;
     private Boolean available;
-    private User owner;
+    private UserDTO owner;
     private List<Booking> bookings;
     private LastAndNextDto nextBooking;
     private LastAndNextDto lastBooking;
 
     private List<CommentDto> comments;
+    private long requestId;
+
+    public ItemDto(Long id, String name, String description, Boolean available, UserDTO owner, long requestId) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.available = available;
+        this.owner = owner;
+        this.requestId = requestId;
+    }
+
+    public ItemDto toItemDto(Item item) {
+        this.id = item.getId();
+        this.name = item.getName();
+        this.description = item.getDescription();
+        this.available = item.getAvailable();
+        this.owner = new UserDTO().toUserDTO(item.getOwner());
+        if (item.getRequestId() != null) {
+            this.requestId = item.getRequestId().getId();
+        }
+        return this;
+    }
+
+
 
     public ItemDto toItemDto(Item item, Optional<Booking> nextBooking,
                              Optional<Booking> lastBooking, List<CommentDto> comments) {
@@ -32,7 +57,7 @@ public class ItemDto {
         this.name = item.getName();
         this.description = item.getDescription();
         this.available = item.getAvailable();
-        this.owner = item.getOwner();
+        this.owner = new UserDTO().toUserDTO(item.getOwner());
         this.comments = comments;
         if (nextBooking.isPresent()) {
             this.nextBooking = new LastAndNextDto().getLastAndNextDto(nextBooking.get());
@@ -48,7 +73,7 @@ public class ItemDto {
         this.name = item.getName();
         this.description = item.getDescription();
         this.available = item.getAvailable();
-        this.owner = item.getOwner();
+        this.owner = new UserDTO().toUserDTO(item.getOwner());
         this.comments = comments;
         return this;
     }

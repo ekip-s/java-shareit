@@ -17,12 +17,19 @@ import java.util.List;
 @RequestMapping("/items")
 @RequiredArgsConstructor
 public class ItemController {
+
     private final ItemService itemService;
     private static final String SHARER_USER_ID = "X-Sharer-User-Id";
 
     @GetMapping
-    public List<ItemDto> get(@RequestHeader(SHARER_USER_ID) long userId) {
-        return itemService.getItems(userId);
+    public List<ItemDto> get(@RequestHeader(SHARER_USER_ID) long userId,
+                             @RequestParam(required = false) Integer from,
+                             @RequestParam(required = false) Integer size) {
+        if (from == null || size == null) {
+            return itemService.getItems(userId);
+        } else {
+            return itemService.getItems(userId, from, size);
+        }
     }
 
     @GetMapping("/{itemId}")
@@ -32,7 +39,7 @@ public class ItemController {
     }
 
     @PostMapping
-    public Item add(@RequestHeader(SHARER_USER_ID) Long userId,
+    public ItemDto add(@RequestHeader(SHARER_USER_ID) Long userId,
                     @RequestBody Item item) {
         log.info("Получен POST запрос к эндпоинту: '/items', Строка параметров запроса: {}", item.toString());
         return itemService.addNewItem(userId, item);
@@ -46,9 +53,15 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<Item> searchItem(@RequestHeader(SHARER_USER_ID) Long userId,
-                                 @RequestParam(required = false, defaultValue = "") String text) {
-        return itemService.searchItem(userId, text);
+    public List<ItemDto> searchItem(@RequestHeader(SHARER_USER_ID) Long userId,
+                                 @RequestParam(required = false, defaultValue = "") String text,
+                                 @RequestParam(required = false) Integer from,
+                                 @RequestParam(required = false) Integer size) {
+        if (from == null || size == null) {
+            return itemService.searchItem(userId, text);
+        } else {
+            return itemService.searchItem(userId, text, from, size);
+        }
     }
 
     @DeleteMapping("/{itemId}")

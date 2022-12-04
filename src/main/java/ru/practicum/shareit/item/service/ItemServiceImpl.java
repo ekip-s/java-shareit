@@ -42,10 +42,20 @@ public class ItemServiceImpl implements ItemService {
 
 
     @Override
-    public Item addNewItem(long userId, @Valid Item item) {
+    public ItemDto addNewItem(long userId, @Valid Item item) {
         userExistenceCheck(userId);
         //item.setUserId(userId);
-        return repository.save(item);
+        return new ItemDto().toItemDto(repository.save(item));
+    }
+
+    @Override
+    public List<ItemDto> getItems(long userId, int from, int size) {
+        return null;
+    }
+
+    @Override
+    public List<ItemDto> searchItem(long userId, String text, int from, int size) {
+        return null;
     }
 
     @Override
@@ -83,12 +93,12 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<Item> searchItem(long userId, String text) {
+    public List<ItemDto> searchItem(long userId, String text) {
         userExistenceCheck(userId);
         if (text.isBlank()) {
             return Collections.emptyList();
         } else {
-            return repository.searchItem(text);
+            return null;
         }
     }
 
