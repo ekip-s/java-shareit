@@ -1,6 +1,5 @@
 package ru.practicum.shareit.booking.service;
 
-
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,6 @@ import ru.practicum.shareit.booking.repository.BookingRepositoryJPA;
 import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepositoryJPA;
-import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserServiceJPA;
 import javax.persistence.EntityManager;
@@ -105,20 +103,20 @@ public class BookingServiceJPA implements BookingService {
             case ALL:
                 bookings = bookingRepositoryJPA.findByBookerOrderByStartDesc(user);
                 break;
-            case CURRENT: //текущие
+            case CURRENT:
                 bookings = bookingRepositoryJPA.findByBookerAndStartBeforeAndEndAfterOrderByStartDesc(user,
                         nowDT, nowDT);
                 break;
-            case PAST: //завершенные
+            case PAST:
                 bookings = bookingRepositoryJPA.findByBookerAndEndBeforeOrderByStartDesc(user, nowDT);
                 break;
-            case FUTURE: //будущие
+            case FUTURE:
                 bookings = bookingRepositoryJPA.findByBookerAndStartAfterOrderByStartDesc(user, nowDT);
                 break;
-            case WAITING: //ожидающие
+            case WAITING:
                 bookings = bookingRepositoryJPA.findByBookerAndStatusOrderByStartDesc(user, BookingStatus.WAITING);
                 break;
-            case REJECTED: //отмененные
+            case REJECTED:
                 bookings = bookingRepositoryJPA.findByBookerAndStatusOrderByStartDesc(user, BookingStatus.REJECTED);
                 break;
         }
@@ -137,20 +135,20 @@ public class BookingServiceJPA implements BookingService {
             case ALL:
                 bookings = bookingRepositoryJPA.findByBooker(user, page);
                 break;
-            case CURRENT: //текущие
+            case CURRENT:
                 bookings = bookingRepositoryJPA.findByBookerAndStartBeforeAndEndAfter(user,
                         nowDT, nowDT, page);
                 break;
-            case PAST: //завершенные
+            case PAST:
                 bookings = bookingRepositoryJPA.findByBookerAndEndBefore(user, nowDT, page);
                 break;
-            case FUTURE: //будущие
+            case FUTURE:
                 bookings = bookingRepositoryJPA.findByBookerAndStartAfter(user, nowDT, page);
                 break;
-            case WAITING: //ожидающие
+            case WAITING:
                 bookings = bookingRepositoryJPA.findByBookerAndStatus(user, BookingStatus.WAITING, page);
                 break;
-            case REJECTED: //отмененные
+            case REJECTED:
                 bookings = bookingRepositoryJPA.findByBookerAndStatus(user, BookingStatus.REJECTED, page);
                 break;
         }
