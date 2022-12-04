@@ -99,9 +99,9 @@ class ItemServiceJPATest {
         item.setAvailable(true);
         ItemDto itemDto = itemServiceJPA.addNewItem(user.getId(), item);
         item.setName("Стул");
-        Item updatedItеm = itemServiceJPA.updateItem(user.getId(), item, itemDto.getId());
-        assertThat(updatedItеm.getId(), equalTo(itemDto.getId()));
-        assertThat(updatedItеm.getName(), equalTo("Стул"));
+        Item updateItem = itemServiceJPA.updateItem(user.getId(), item, itemDto.getId());
+        assertThat(updateItem.getId(), equalTo(itemDto.getId()));
+        assertThat(updateItem.getName(), equalTo("Стул"));
     }
 
     @Test

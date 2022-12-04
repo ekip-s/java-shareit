@@ -60,7 +60,7 @@ public class ItemServiceJPA implements ItemService {
     @Override
     public List<ItemDto> getItems(long userId, int from, int size) {
         checkPaginationParams(from, size);
-        from = from/size;
+        from = from / size;
         Pageable page = PageRequest.of(from, size, Sort.by("id").descending());
         return itemDtoListPage(itemRepositoryJPA.findByOwner(new User(userId), page), userId);
     }
@@ -116,7 +116,7 @@ public class ItemServiceJPA implements ItemService {
     @Override
     public List<ItemDto> searchItem(long userId, String text, int from, int size) {
         checkPaginationParams(from, size);
-        from = from/size;
+        from = from / size;
         Pageable page = PageRequest.of(from, size, Sort.by("id").descending());
         if (text.isBlank()) {
             return new ArrayList<>();

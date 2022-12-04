@@ -45,7 +45,6 @@ public class ItemRequestService {
         return new ItemRequestDto().toItemRequestDto(requestRepositoryJPA.save(itemRequest));
     }
 
-
     public List<ItemRequestDto> myRequest (long userId) {
         User user = getUser(userId);
         return toListDTO(requestRepositoryJPA.findByRequestAuthorOrderByCreationDate(user));
@@ -54,7 +53,7 @@ public class ItemRequestService {
     public List<ItemRequestDto> strangerRequest(long userId, int from, int size) {
         User user = getUser(userId);
         checkPaginationParams(from, size);
-        from = from/size;
+        from = from / size;
         Pageable page = PageRequest.of(from, size, Sort.by("creationDate").descending());
         return toPageDTO(requestRepositoryJPA.findByRequestAuthorNot(user, page));
     }

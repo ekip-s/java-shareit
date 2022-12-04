@@ -39,12 +39,12 @@ class UserServiceJPATest {
         boolean isGoodTest157 = false;
 
         for (User u : users) {
-            if(u.getId() == user156.getId()) {
+            if (u.getId() == user156.getId()) {
                 assertThat(u.getName(), equalTo("name_user156"));
                 assertThat(u.getEmail(), equalTo("test156@mail.ru"));
                 isGoodTest156 = true;
             }
-            if(u.getId() == user157.getId()) {
+            if (u.getId() == user157.getId()) {
                 assertThat(u.getName(), equalTo("name_user157"));
                 assertThat(u.getEmail(), equalTo("test157@mail.ru"));
                 isGoodTest157 = true;

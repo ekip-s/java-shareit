@@ -10,13 +10,11 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingDto;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.model.RequestParameters;
-import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemServiceJPA;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserServiceJPA;
-
 import java.time.LocalDateTime;
 import java.util.List;
 

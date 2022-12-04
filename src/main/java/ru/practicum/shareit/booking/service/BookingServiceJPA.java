@@ -128,7 +128,7 @@ public class BookingServiceJPA implements BookingService {
         User user = userServiceJPA.getById(userId);
         LocalDateTime nowDT = LocalDateTime. now();
         checkPaginationParams(from, size);
-        from = from/size;
+        from = from / size;
         Pageable page = PageRequest.of(from, size, Sort.by("start").descending());
         Page<Booking> bookings = null;
         switch (requestParameters) {
@@ -212,7 +212,7 @@ public class BookingServiceJPA implements BookingService {
     public List<Booking> getBookingsOwner(long userId, RequestParameters requestParameters, int from, int size) {
         User user = userServiceJPA.getById(userId);
         checkPaginationParams(from, size);
-        from = from/size;
+        from = from / size;
         LocalDateTime nowDT = LocalDateTime. now();
         Page<Booking> bookings = null;
         Pageable page = PageRequest.of(from, size, Sort.by("start").descending());

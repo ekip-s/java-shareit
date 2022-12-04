@@ -37,10 +37,11 @@ public class ItemRequestDto {
         this.requestAuthor = new UserDTO().toUserDTO(itemRequest.getRequestAuthor());
         return this;
     }
+
     private List<ItemDTORequest> toItemDTORequestList(List<Item> itemsList) {
         if (itemsList == null) {
             return new ArrayList<>();
-        } else if(itemsList.isEmpty()) {
+        } else if (itemsList.isEmpty()) {
             return new ArrayList<>();
         } else {
                 return itemsList.stream()
