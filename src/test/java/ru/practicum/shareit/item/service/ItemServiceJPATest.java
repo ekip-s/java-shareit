@@ -68,6 +68,32 @@ class ItemServiceJPATest {
     }
 
     @Test
+    void getItemsPage() {
+        Item itemTest99 = new Item("Табуретка99", "табуретка на 4-ех ножках");
+        itemTest99.setAvailable(true);
+        ItemDto itemDto99 = itemServiceJPA.addNewItem(user.getId(), itemTest99);
+        boolean isItemDto99 = false;
+        Item itemTest666 = new Item("Табуретка666", "табуретка на 4-ех ножках");
+        itemTest666.setAvailable(true);
+        ItemDto itemDto666 = itemServiceJPA.addNewItem(user.getId(), itemTest666);
+        boolean isItemDto666 = false;
+
+        List<ItemDto> itemDtoList = itemServiceJPA.getItems(user.getId(), 0,6);
+        for (ItemDto i : itemDtoList) {
+            if (i.getId() == itemDto99.getId()) {
+                assertThat(i.getName(), equalTo("Табуретка99"));
+                isItemDto99 = true;
+            }
+            if (i.getId() == itemDto666.getId()) {
+                assertThat(i.getName(), equalTo("Табуретка666"));
+                isItemDto666 = true;
+            }
+        }
+        assertThat(isItemDto99, equalTo(true));
+        assertThat(isItemDto666, equalTo(true));
+    }
+
+    @Test
     void getById() {
         Throwable thrown = assertThrows(IllegalArgumentException.class, () -> {
             itemServiceJPA.getById(1,156L);
@@ -124,6 +150,20 @@ class ItemServiceJPATest {
 
         ItemDto itemDto = itemServiceJPA.addNewItem(user.getId(), newItem);
         List<ItemDto> itemDtoList = itemServiceJPA.searchItem(user.getId(), "византий");
+
+        assertThat(itemDtoList.size(), equalTo(1));
+        assertThat(itemDtoList.get(0).getId(), equalTo(itemDto.getId()));
+        assertThat(itemDtoList.get(0).getName(), equalTo("Ваза"));
+        assertThat(itemDtoList.get(0).getDescription(), equalTo("Ваза в вИзаНтиЙсКом стиле"));
+    }
+
+    @Test
+    void searchItemPage() {
+        Item newItem = new Item("Ваза","Ваза в вИзаНтиЙсКом стиле");
+        newItem.setAvailable(true);
+
+        ItemDto itemDto = itemServiceJPA.addNewItem(user.getId(), newItem);
+        List<ItemDto> itemDtoList = itemServiceJPA.searchItem(user.getId(), "византий", 0, 1);
 
         assertThat(itemDtoList.size(), equalTo(1));
         assertThat(itemDtoList.get(0).getId(), equalTo(itemDto.getId()));

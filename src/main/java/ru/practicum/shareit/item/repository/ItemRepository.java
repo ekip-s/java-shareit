@@ -18,6 +18,4 @@ public interface ItemRepository {
     Item update(@Valid Item item);
 
     void deleteByUserIdAndItemId(long userId, long itemId);
-
-    List<Item> searchItem(String text);
 }
