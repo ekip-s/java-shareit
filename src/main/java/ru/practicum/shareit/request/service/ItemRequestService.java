@@ -45,7 +45,7 @@ public class ItemRequestService {
         return new ItemRequestDto().toItemRequestDto(requestRepositoryJPA.save(itemRequest));
     }
 
-    public List<ItemRequestDto> myRequest (long userId) {
+    public List<ItemRequestDto> myRequest(long userId) {
         User user = getUser(userId);
         return toListDTO(requestRepositoryJPA.findByRequestAuthorOrderByCreationDate(user));
     }
