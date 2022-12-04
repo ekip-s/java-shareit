@@ -72,14 +72,40 @@ class ItemRequestServiceTest {
 
     @Test
     void strangerRequest() {
-        ItemRequestDto itemRequestDto1 = itemRequestService.addNewRequest(itemRequest, user.getId());
         User userNew = userServiceJPA.saveUser(new User("pochta2@mail.ru", "Valeria"));
+        ItemRequestDto itemRequestDto1 = itemRequestService.addNewRequest(itemRequest, user.getId());
         boolean isRequest1 = false;
         ItemRequest itemRequestNew = new ItemRequest("Это самый новый запрос.");
-        ItemRequestDto itemRequestDto2 = itemRequestService.addNewRequest(itemRequestNew, userNew.getId());
+        ItemRequestDto itemRequestDto2 = itemRequestService.addNewRequest(itemRequestNew, user.getId());
         boolean isRequest2 = false;
 
         List<ItemRequestDto> itemRequestDtoList = itemRequestService.strangerRequest(userNew.getId());
+        assertThat(itemRequestDtoList.isEmpty(), equalTo(false));
+
+        for (ItemRequestDto i : itemRequestDtoList) {
+            if (i.getId() == itemRequestDto1.getId()) {
+                assertThat(i.getDescription(), equalTo("такой запрос"));
+                isRequest1 = true;
+            }
+            if (i.getId() == itemRequestDto2.getId()) {
+                assertThat(i.getDescription(), equalTo("Это самый новый запрос."));
+                isRequest2 = true;
+            }
+        }
+        assertThat(isRequest1, equalTo(true));
+        assertThat(isRequest2, equalTo(true));
+    }
+
+    @Test
+    void strangerRequestPage() {
+        User userNew = userServiceJPA.saveUser(new User("pochta2@mail.ru", "Valeria"));
+        ItemRequestDto itemRequestDto1 = itemRequestService.addNewRequest(itemRequest, user.getId());
+        boolean isRequest1 = false;
+        ItemRequest itemRequestNew = new ItemRequest("Это самый новый запрос.");
+        ItemRequestDto itemRequestDto2 = itemRequestService.addNewRequest(itemRequestNew, user.getId());
+        boolean isRequest2 = false;
+
+        List<ItemRequestDto> itemRequestDtoList = itemRequestService.strangerRequest(userNew.getId(), 0, 15);
         assertThat(itemRequestDtoList.isEmpty(), equalTo(false));
 
         for (ItemRequestDto i : itemRequestDtoList) {
