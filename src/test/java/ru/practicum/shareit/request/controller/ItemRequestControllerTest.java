@@ -22,8 +22,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -101,6 +100,21 @@ class ItemRequestControllerTest {
                 .thenReturn(itemRequestDtoList);
 
         mockMvc.perform(get("/requests/all")
+                        .header("X-Sharer-User-Id", 1)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[*].id", containsInAnyOrder(1, 2)))
+                .andExpect(jsonPath("$[*].description", containsInAnyOrder("Запрос", "Запрос2")))
+                .andExpect(jsonPath("$[*].requestAuthor.id", containsInAnyOrder(1, 1)))
+                .andExpect(jsonPath("$[*].requestAuthor.name", containsInAnyOrder("name", "name2")));
+    }
+
+    @Test
+    void strangerRequestPage() throws Exception {
+        when(itemRequestService.strangerRequest(anyLong(), anyInt(), anyInt()))
+                .thenReturn(itemRequestDtoList);
+
+        mockMvc.perform(get("/requests/all?from=0&size=10")
                         .header("X-Sharer-User-Id", 1)
                 )
                 .andExpect(status().isOk())

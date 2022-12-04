@@ -81,6 +81,27 @@ class ItemControllerTest {
     }
 
     @Test
+    void get_items_list_page() throws Exception {
+        when(itemService.getItems(anyLong(), anyInt(), anyInt()))
+                .thenReturn(itemDtoList);
+
+        mockMvc.perform(get("/items?from=0&size=10")
+                        .header("X-Sharer-User-Id", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[*].id", containsInAnyOrder(1, 2)))
+                .andExpect(jsonPath("$[*].name", containsInAnyOrder("Табуретка", "Стул")))
+                .andExpect(jsonPath("$[*].description", containsInAnyOrder("красивая табуретка",
+                        "а стул круче")))
+                .andExpect(jsonPath("$[*].available", containsInAnyOrder(true, false)))
+                .andExpect(jsonPath("$[*].requestId", containsInAnyOrder(3, 4)))
+                .andExpect(jsonPath("$[*].owner.id", containsInAnyOrder(1, 2)))
+                .andExpect(jsonPath("$[*].owner.name", containsInAnyOrder("Олег",
+                        "Виталя")));
+    }
+
+    @Test
     void getById() throws Exception {
         when(itemService.getById(anyLong(), anyLong()))
                 .thenReturn(itemDto);
@@ -144,6 +165,29 @@ class ItemControllerTest {
                 .thenReturn(itemDtoList);
 
         mockMvc.perform(get("/items/search?text=стул")
+                        .header("X-Sharer-User-Id", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .accept(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[*].id", containsInAnyOrder(1, 2)))
+                .andExpect(jsonPath("$[*].name", containsInAnyOrder("Табуретка", "Стул")))
+                .andExpect(jsonPath("$[*].description", containsInAnyOrder("красивая табуретка",
+                        "а стул круче")))
+                .andExpect(jsonPath("$[*].available", containsInAnyOrder(true, false)))
+                .andExpect(jsonPath("$[*].requestId", containsInAnyOrder(3, 4)))
+                .andExpect(jsonPath("$[*].owner.id", containsInAnyOrder(1, 2)))
+                .andExpect(jsonPath("$[*].owner.name", containsInAnyOrder("Олег",
+                        "Виталя")));
+    }
+
+    @Test
+    void searchItemPage() throws Exception {
+        when(itemService.searchItem(anyLong(), anyString(), anyInt(),anyInt()))
+                .thenReturn(itemDtoList);
+
+        mockMvc.perform(get("/items/search?text=стул&from=0&size=10")
                         .header("X-Sharer-User-Id", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8)
