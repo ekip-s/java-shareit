@@ -16,8 +16,6 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemServiceJPA;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserServiceJPA;
-
-import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
