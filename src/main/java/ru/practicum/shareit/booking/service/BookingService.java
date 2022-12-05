@@ -4,8 +4,6 @@ import ru.practicum.shareit.booking.model.RequestParameters;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingDto;
 import ru.practicum.shareit.item.model.Item;
-
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
