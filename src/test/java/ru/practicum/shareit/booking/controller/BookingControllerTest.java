@@ -140,6 +140,22 @@ class BookingControllerTest {
 
     @Test
     void getBookingsOwner() throws Exception  {
+        when(bookingService.getBookingsOwner(anyLong(), any()))
+                .thenReturn(bookings);
+
+        mockMvc.perform(get("/bookings/owner")
+                        .header("X-Sharer-User-Id", 1)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[*].id", containsInAnyOrder(1, 2)))
+                .andExpect(jsonPath("$[*].status", containsInAnyOrder("WAITING", "APPROVED")))
+                .andExpect(jsonPath("$[*].item.name", containsInAnyOrder("name", "name2")))
+                .andExpect(jsonPath("$[*].item.description", containsInAnyOrder("description",
+                        "description2")));
+    }
+
+    @Test
+    void getBookingsOwnerPage() throws Exception  {
         when(bookingService.getBookingsOwner(anyLong(), any(), anyInt(), anyInt()))
                 .thenReturn(bookings);
 
@@ -153,12 +169,4 @@ class BookingControllerTest {
                 .andExpect(jsonPath("$[*].item.description", containsInAnyOrder("description",
                         "description2")));
     }
-
-    @Test
-    void getBookingsOwnerPage() throws Exception  {
-        when(bookingService.getBookingsOwner(anyLong(), any()))
-                .thenReturn(bookings);
-    }
-
-
 }

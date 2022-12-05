@@ -292,7 +292,7 @@ public class BookingServiceJPA implements BookingService {
         if (from < 0) {
             throw new ConflictException("Параметр from не может быть отрицательным.");
         } else if (size < 1) {
-            throw new ConflictException("Параметр size должен быть больше нуля.");
+            throw new ConflictException("Параметр size должен быть меньше нуля.");
         }
     }
 
