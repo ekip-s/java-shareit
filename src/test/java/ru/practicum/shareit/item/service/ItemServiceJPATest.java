@@ -11,9 +11,13 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepositoryJPA;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserServiceJPA;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -27,12 +31,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class ItemServiceJPATest {
 
-    private final ItemRepositoryJPA itemRepositoryJPA;
     private final ItemServiceJPA itemServiceJPA;
     private final UserServiceJPA userServiceJPA;
+    private final ItemRequestService itemRequestService;
 
     User user;
     Item item;
+    ItemRequest itemRequest;
 
     @BeforeEach
     void createTest() {
@@ -155,6 +160,7 @@ class ItemServiceJPATest {
         assertThat(itemDtoList.get(0).getId(), equalTo(itemDto.getId()));
         assertThat(itemDtoList.get(0).getName(), equalTo("Ваза"));
         assertThat(itemDtoList.get(0).getDescription(), equalTo("Ваза в вИзаНтиЙсКом стиле"));
+        itemServiceJPA.searchItem(user.getId(), "");
     }
 
     @Test
@@ -169,12 +175,14 @@ class ItemServiceJPATest {
         assertThat(itemDtoList.get(0).getId(), equalTo(itemDto.getId()));
         assertThat(itemDtoList.get(0).getName(), equalTo("Ваза"));
         assertThat(itemDtoList.get(0).getDescription(), equalTo("Ваза в вИзаНтиЙсКом стиле"));
+        itemServiceJPA.searchItem(user.getId(), "", 0, 1);
     }
 
     @Test
     void addComment() {
         item.setAvailable(true);
         ItemDto itemDto = itemServiceJPA.addNewItem(user.getId(), item);
+
 
         Throwable thrown = assertThrows(ConflictException.class, () -> {
             itemServiceJPA.addComment(user.getId(),
