@@ -11,7 +11,6 @@ import ru.practicum.shareit.ShareItApp;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.user.model.User;
-import java.time.LocalDateTime;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -37,7 +36,7 @@ class BookingRepositoryJPATest {
     @Sql({"/test-schema.sql", "/test-data.sql"})
     void findCurrentBookingByItem() {
         Page<Booking> bookingPage = bookingRepositoryJPA.findCurrentBookingByItem(
-                new User(1L), LocalDateTime.now(), PageRequest.of(0, 2));
+                new User(1L), PageRequest.of(0, 2));
         assertThat(bookingPage.isEmpty(), equalTo(false));
     }
 
@@ -45,10 +44,10 @@ class BookingRepositoryJPATest {
     @Sql({"/test-schema.sql", "/test-data.sql"})
     void findPastBookingByItem() {
         Page<Booking> bookingPage = bookingRepositoryJPA.findPastBookingByItem(
-                new User(2L), LocalDateTime.now(), PageRequest.of(0, 2));
+                new User(2L),  PageRequest.of(0, 2));
         assertThat(bookingPage.isEmpty(), equalTo(true));
         Page<Booking> bookingPage2 = bookingRepositoryJPA.findPastBookingByItem(
-                new User(1L), LocalDateTime.now(), PageRequest.of(0, 2));
+                new User(1L),  PageRequest.of(0, 2));
         assertThat(bookingPage2.isEmpty(), equalTo(false));
     }
 
@@ -56,10 +55,10 @@ class BookingRepositoryJPATest {
     @Sql({"/test-schema.sql", "/test-data.sql"})
     void findFutureBookingByItem() {
         Page<Booking> bookingPage = bookingRepositoryJPA.findFutureBookingByItem(
-                new User(2L), LocalDateTime.now(), PageRequest.of(0, 2));
+                new User(2L), PageRequest.of(0, 2));
         assertThat(bookingPage.isEmpty(), equalTo(true));
         Page<Booking> bookingPage2 = bookingRepositoryJPA.findFutureBookingByItem(
-                new User(1L), LocalDateTime.now(), PageRequest.of(0, 2));
+                new User(1L),  PageRequest.of(0, 2));
         assertThat(bookingPage2.isEmpty(), equalTo(false));
     }
 

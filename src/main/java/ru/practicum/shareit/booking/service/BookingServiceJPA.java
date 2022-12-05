@@ -58,8 +58,7 @@ public class BookingServiceJPA implements BookingService {
         checkEntity(userId, optionalItem, bookingDto);
         checkDate(optionalItem.get(), bookingDto);
         User booker = userServiceJPA.getById(userId);
-        Booking booking = new Booking(bookingDto.getStart(), bookingDto.getEnd(), optionalItem.get(),
-                booker);
+        Booking booking = new Booking(bookingDto.getStart(), bookingDto.getEnd(), optionalItem.get(), booker);
         bookingRepositoryJPA.save(booking);
         return booking;
     }
@@ -171,23 +170,21 @@ public class BookingServiceJPA implements BookingService {
                 break;
             case CURRENT: //текущие
                 query = session.createQuery("select b from Booking b left join fetch b.item AS i " +
-                        "where i.owner=:user AND (b.start < :nowDT AND b.end > :nowDT) ORDER BY b.start DESC");
+                        "where i.owner=:user AND (b.start < current_timestamp AND b.end > current_timestamp)" +
+                        " ORDER BY b.start DESC");
                 query.setParameter("user", user);
-                query.setParameter("nowDT", nowDT);
                 bookings = query.list();
                 break;
             case PAST: //завершенны
                 query = session.createQuery("select b from Booking b left join fetch b.item AS i " +
-                        "where i.owner=:user AND b.end < :nowDT ORDER BY b.start DESC");
+                        "where i.owner=:user AND b.end < current_timestamp ORDER BY b.start DESC");
                 query.setParameter("user", user);
-                query.setParameter("nowDT", nowDT);
                 bookings = query.list();
                 break;
             case FUTURE: //будущие
                 query = session.createQuery("select b from Booking b left join fetch b.item AS i " +
-                        "where i.owner=:user AND b.start > :nowDT ORDER BY b.start DESC");
+                        "where i.owner=:user AND b.start > current_timestamp ORDER BY b.start DESC");
                 query.setParameter("user", user);
-                query.setParameter("nowDT", nowDT);
                 bookings = query.list();
                 break;
             case WAITING: //ожидающие
@@ -222,14 +219,14 @@ public class BookingServiceJPA implements BookingService {
                 bookings = bookingRepositoryJPA.findAllBookingByItemJpql(user, page);
                 break;
             case CURRENT:
-                bookings = bookingRepositoryJPA.findCurrentBookingByItem(user, nowDT, page);
+                bookings = bookingRepositoryJPA.findCurrentBookingByItem(user, page);
                 break;
             case PAST:
                 System.out.println("Здесь: " + user);
-                bookings = bookingRepositoryJPA.findPastBookingByItem(user, nowDT, page);
+                bookings = bookingRepositoryJPA.findPastBookingByItem(user, page);
                 break;
             case FUTURE:
-                bookings = bookingRepositoryJPA.findFutureBookingByItem(user, nowDT, page);
+                bookings = bookingRepositoryJPA.findFutureBookingByItem(user, page);
                 break;
             case WAITING:
                 bookings = bookingRepositoryJPA.findBookingByItemByStatus(user, BookingStatus.WAITING, page);
@@ -271,8 +268,8 @@ public class BookingServiceJPA implements BookingService {
 
     private List<Booking> truncateResponsePage(Page<Booking> bookings) {
         return bookings.stream()
-                .map(i -> i.truncateResponse())
-                .collect(Collectors.toList());
+                    .map(i -> i.truncateResponse())
+                    .collect(Collectors.toList());
     }
 
 
@@ -281,7 +278,7 @@ public class BookingServiceJPA implements BookingService {
         if (optionalItem.isEmpty()) {
             throw new IllegalArgumentException("Такого товара нет");
         } else if (userId == optionalItem.get().getOwner().getId()) {
-            throw new IllegalArgumentException("Нельзя забронировать не свой товар.");
+            throw new IllegalArgumentException("Нельзя забронировать свой товар.");
         } else if (!optionalItem.get().getAvailable()) {
             throw new ConflictException("Товар сейчас не доступен, выберите другой");
         } else if (booking.getStart().isAfter(booking.getEnd())) {
