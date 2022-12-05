@@ -198,6 +198,17 @@ class BookingServiceJPATest {
         assertThat(bookings.isEmpty(), equalTo(true));
         List<Booking> bookings2 = bookingServiceJPA.getBookingsOwner(user.getId(), RequestParameters.ALL);
         assertThat(bookings2.isEmpty(), equalTo(false));
+        List<Booking> bookingList2 = bookingServiceJPA.getBookingsOwner(user2.getId(),
+                RequestParameters.PAST);
+        assertThat(bookingList2.isEmpty(), equalTo(true));
+        List<Booking> bookingList3 = bookingServiceJPA.getBookingsOwner(user2.getId(), RequestParameters.CURRENT);
+        assertThat(bookingList3.isEmpty(), equalTo(true));
+        List<Booking> bookingList4 = bookingServiceJPA.getBookingsOwner(user2.getId(), RequestParameters.FUTURE);
+        assertThat(bookingList4.isEmpty(), equalTo(true));
+        List<Booking> bookingList5 = bookingServiceJPA.getBookingsOwner(user2.getId(), RequestParameters.WAITING);
+        assertThat(bookingList5.isEmpty(), equalTo(true));
+        List<Booking> bookingList6 = bookingServiceJPA.getBookingsOwner(user2.getId(), RequestParameters.REJECTED);
+        assertThat(bookingList6.isEmpty(), equalTo(true));
     }
 
     @Test

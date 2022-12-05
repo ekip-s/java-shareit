@@ -221,19 +221,20 @@ public class BookingServiceJPA implements BookingService {
             case ALL:
                 bookings = bookingRepositoryJPA.findAllBookingByItemJpql(user, page);
                 break;
-            case CURRENT: //текущие
+            case CURRENT:
                 bookings = bookingRepositoryJPA.findCurrentBookingByItem(user, nowDT, page);
                 break;
-            case PAST: //завершенны
+            case PAST:
+                System.out.println("Здесь: " + user);
                 bookings = bookingRepositoryJPA.findPastBookingByItem(user, nowDT, page);
                 break;
-            case FUTURE: //будущие
+            case FUTURE:
                 bookings = bookingRepositoryJPA.findFutureBookingByItem(user, nowDT, page);
                 break;
-            case WAITING: //ожидающие
+            case WAITING:
                 bookings = bookingRepositoryJPA.findBookingByItemByStatus(user, BookingStatus.WAITING, page);
                 break;
-            case REJECTED: //отмененные
+            case REJECTED:
                 bookings = bookingRepositoryJPA.findBookingByItemByStatus(user, BookingStatus.REJECTED, page);
                 break;
         }

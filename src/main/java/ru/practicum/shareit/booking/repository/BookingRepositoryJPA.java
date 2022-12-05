@@ -48,7 +48,7 @@ public interface BookingRepositoryJPA extends JpaRepository<Booking, Long> {
     Page<Booking> findAllBookingByItemJpql(@Param("user") User user, Pageable pageable);
 
     @Query(value = "select b from Booking b left join b.item AS i " +
-            "where i.owner=:user AND (b.start < :nowDT AND b.end > :nowDT)")
+            "where i.owner=:user AND (b.start < :nowDT AND b.end>:nowDT)")
     Page<Booking> findCurrentBookingByItem(User user, LocalDateTime nowDT, Pageable pageable);
 
     @Query(value = "select b from Booking b left join b.item AS i " +
