@@ -3,8 +3,11 @@ package ru.practicum.shareit.item.dto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.model.UserDTO;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -18,9 +21,12 @@ class ItemDtoTest {
 
     @BeforeEach
     void createTest() {
-        item = new Item("Табуретка", "табуретка на 4-ех ножках");
-        item.setId(1L);
-        item.setOwner(new User("test@mail.ru", "name_user"));
+        ItemRequest itemRequest = new ItemRequest(1L, "описание", LocalDateTime.now(), new ArrayList<>(),
+                new User(2L));
+        item = new Item(1L, "Табуретка", "табуретка на 4-ех ножках", true, itemRequest,
+                new User("test@mail.ru", "name_user"), new ArrayList<>(), new ArrayList<>());
+        new ItemDto(2L, "Табуретка", "табуретка на 4-ех ножках",
+                true, new UserDTO(1L, "name"), 1);
     }
 
     @Test
