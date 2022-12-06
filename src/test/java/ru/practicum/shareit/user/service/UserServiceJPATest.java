@@ -25,23 +25,23 @@ class UserServiceJPATest {
 
     private final UserServiceJPA userServiceJPA;
     private User user;
-    private final String EMAIL = "test@mail.ru";
-    private final String EMAIL_2 = "test156@mail.ru";
-    private final String EMAIL_3 = "test157@mail.ru";
-    private final String NAME = "name_user";
-    private final String NAME_2 = "name_user156";
-    private final String NAME_3 = "name_user157";
-    private final String NAME_4 = "Vitalik";
+    private final String email = "test@mail.ru";
+    private final String email2 = "test156@mail.ru";
+    private final String email3 = "test157@mail.ru";
+    private final String name = "name_user";
+    private final String name2 = "name_user156";
+    private final String name3 = "name_user157";
+    private final String name4 = "Vitalik";
 
     @BeforeEach
     void createTest() {
-        user = new User(EMAIL, NAME);
+        user = new User(email, name);
     }
 
     @Test
     void getAllUsersTest() {
-        User user156 = userServiceJPA.saveUser(new User(EMAIL_2, NAME_2));
-        User user157 = userServiceJPA.saveUser(new User(EMAIL_3, NAME_3));
+        User user156 = userServiceJPA.saveUser(new User(email2, name2));
+        User user157 = userServiceJPA.saveUser(new User(email3, name3));
 
         List<User> users = userServiceJPA.getAllUsers();
         boolean isGoodTest156 = false;
@@ -49,13 +49,13 @@ class UserServiceJPATest {
 
         for (User u : users) {
             if (u.getId() == user156.getId()) {
-                assertThat(u.getName(), equalTo(NAME_2));
-                assertThat(u.getEmail(), equalTo(EMAIL_2));
+                assertThat(u.getName(), equalTo(name2));
+                assertThat(u.getEmail(), equalTo(email2));
                 isGoodTest156 = true;
             }
             if (u.getId() == user157.getId()) {
-                assertThat(u.getName(), equalTo(NAME_3));
-                assertThat(u.getEmail(), equalTo(EMAIL_3));
+                assertThat(u.getName(), equalTo(name3));
+                assertThat(u.getEmail(), equalTo(email3));
                 isGoodTest157 = true;
             }
         }
@@ -71,17 +71,17 @@ class UserServiceJPATest {
         assertThat(thrown.getMessage(), equalTo("Нет пользователя с id =1"));
         User testUser = userServiceJPA.saveUser(user);
         User testUser2 = userServiceJPA.getById(testUser.getId());
-        assertThat(testUser2.getName(), equalTo(NAME));
-        assertThat(testUser2.getEmail(), equalTo(EMAIL));
+        assertThat(testUser2.getName(), equalTo(name));
+        assertThat(testUser2.getEmail(), equalTo(email));
 
         Throwable thrown2 = assertThrows(ConstraintViolationException.class, () -> {
-            userServiceJPA.saveUser(new User("testmail.ru", NAME_3));
+            userServiceJPA.saveUser(new User("testmail.ru", name3));
         });
         assertThat(thrown2.getMessage(),
                 equalTo("saveUser.user.email: Ошибка валидации: e-mail введен неправильно."));
 
         Throwable thrown3 = assertThrows(ConstraintViolationException.class, () -> {
-            userServiceJPA.saveUser(new User(EMAIL, null));
+            userServiceJPA.saveUser(new User(email, null));
         });
         assertThat(thrown3.getMessage(),
                 equalTo("saveUser.user.name: Ошибка валидации: имя не заполнено."));
@@ -91,26 +91,26 @@ class UserServiceJPATest {
     void saveUserTest() {
         User user2 = userServiceJPA.saveUser(user);
         assertThat(user2.getId(), notNullValue());
-        assertThat(user2.getName(), equalTo(NAME));
-        assertThat(user2.getEmail(), equalTo(EMAIL));
+        assertThat(user2.getName(), equalTo(name));
+        assertThat(user2.getEmail(), equalTo(email));
     }
 
     @Test
     void updateUserTest() {
         user = userServiceJPA.saveUser(user);
-        user.setName(NAME_4);
+        user.setName(name4);
         User user2 = userServiceJPA.updateUser(user, user.getId());
         assertThat(user2.getId(), notNullValue());
-        assertThat(user2.getName(), equalTo(NAME_4));
-        assertThat(user2.getEmail(), equalTo(EMAIL));
+        assertThat(user2.getName(), equalTo(name4));
+        assertThat(user2.getEmail(), equalTo(email));
     }
 
     @Test
     void deleteUserTest() {
         User user1 = userServiceJPA.saveUser(user);
         User testUser = userServiceJPA.getById(user1.getId());
-        assertThat(testUser.getName(), equalTo(NAME));
-        assertThat(testUser.getEmail(), equalTo(EMAIL));
+        assertThat(testUser.getName(), equalTo(name));
+        assertThat(testUser.getEmail(), equalTo(email));
 
         userServiceJPA.deleteUser(user1.getId());
         Throwable thrown2 = assertThrows(IllegalArgumentException.class, () -> {

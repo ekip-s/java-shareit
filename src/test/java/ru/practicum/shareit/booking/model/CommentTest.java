@@ -10,14 +10,14 @@ import static org.hamcrest.Matchers.equalTo;
 
 class CommentTest {
 
-    private final String COMMENT = "Такой коммент";
+    private final String comment = "Такой коммент";
 
     @Test
     void setItemAndAuthorTest() {
-        Comment comment = new Comment(COMMENT);
+        Comment comment = new Comment(this.comment);
         comment.setItemAndAuthor(new Item(1L), new User(1L));
 
-        assertThat(comment.getText(), equalTo(COMMENT));
+        assertThat(comment.getText(), equalTo(this.comment));
         assertThat(comment.getItem().getId(), equalTo(1L));
         assertThat(comment.getAuthor().getId(), equalTo(1L));
     }

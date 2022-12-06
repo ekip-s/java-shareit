@@ -13,21 +13,20 @@ import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.*;
 
 class ItemDtoTest {
 
     private Item item;
-    private final String NAME = "Табуретка";
-    private final String USER_NAME = "name_user";
+    private final String name = "Табуретка";
+    private final String userName = "name_user";
 
     @BeforeEach
     void createTest() {
         ItemRequest itemRequest = new ItemRequest(1L, "описание", LocalDateTime.now(), new ArrayList<>(),
                 new User(2L));
-        item = new Item(1L, NAME, "табуретка на 4-ех ножках", true, itemRequest,
-                new User("test@mail.ru", USER_NAME), new ArrayList<>(), new ArrayList<>());
-        new ItemDto(2L, NAME, "табуретка на 4-ех ножках",
+        item = new Item(1L, name, "табуретка на 4-ех ножках", true, itemRequest,
+                new User("test@mail.ru", userName), new ArrayList<>(), new ArrayList<>());
+        new ItemDto(2L, name, "табуретка на 4-ех ножках",
                 true, new UserDTO(1L, "name"), 1);
     }
 
@@ -36,8 +35,8 @@ class ItemDtoTest {
         ItemDto itemDto = new ItemDto().toItemDto(item);
 
         assertThat(itemDto.getId(), equalTo(1L));
-        assertThat(itemDto.getName(), equalTo(NAME));
-        assertThat(itemDto.getOwner().getName(), equalTo(USER_NAME));
+        assertThat(itemDto.getName(), equalTo(name));
+        assertThat(itemDto.getOwner().getName(), equalTo(userName));
     }
 
     @Test
@@ -46,8 +45,8 @@ class ItemDtoTest {
                 Optional. empty(), new ArrayList<>());
 
         assertThat(itemDto.getId(), equalTo(1L));
-        assertThat(itemDto.getName(), equalTo(NAME));
-        assertThat(itemDto.getOwner().getName(), equalTo(USER_NAME));
+        assertThat(itemDto.getName(), equalTo(name));
+        assertThat(itemDto.getOwner().getName(), equalTo(userName));
     }
 
     @Test
@@ -55,7 +54,7 @@ class ItemDtoTest {
         ItemDto itemDto = new ItemDto().toItemDto(item, new ArrayList<>());
 
         assertThat(itemDto.getId(), equalTo(1L));
-        assertThat(itemDto.getName(), equalTo(NAME));
-        assertThat(itemDto.getOwner().getName(), equalTo(USER_NAME));
+        assertThat(itemDto.getName(), equalTo(name));
+        assertThat(itemDto.getOwner().getName(), equalTo(userName));
     }
 }

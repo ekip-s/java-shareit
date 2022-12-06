@@ -42,29 +42,29 @@ class ItemControllerTest {
     private Item item;
     private CommentDto commentDto;
     private Comment comment;
-    private String SharerUserId = "X-Sharer-User-Id";
-    private final String NAME  = "Табуретка";
-    private final String NAME_2  = "Стул";
-    private final String DESCRIPTION = "красивая табуретка";
-    private final String DESCRIPTION_2 = "а стул круче";
-    private final String DESCRIPTION_3 = "Еще одна табуретка";
-    private final String USER_NAME = "Олег";
-    private final String USER_NAME_2 = "Виталя";
-    private final String USER_NAME_3 = "Троль";
-    private final String COMMENT = "Такой коммент";
-    private final String URL = "/items";
+    private String sharerUserId = "X-Sharer-User-Id";
+    private final String name = "Табуретка";
+    private final String name2 = "Стул";
+    private final String description = "красивая табуретка";
+    private final String description2 = "а стул круче";
+    private final String description3 = "Еще одна табуретка";
+    private final String userName = "Олег";
+    private final String userName2 = "Виталя";
+    private final String userName3 = "Троль";
+    private final String comment2 = "Такой коммент";
+    private final String url = "/items";
 
     @BeforeEach
     void createTest() {
         mapper.registerModule(new JavaTimeModule());
 
-        itemDto = new ItemDto(1L, NAME, DESCRIPTION, true,
-                new UserDTO(1L, USER_NAME), 3);
-        itemDto2 = new ItemDto(2L, NAME_2, DESCRIPTION_2, false,
-                new UserDTO(2L, USER_NAME_2), 4);
-        item = new Item(NAME,DESCRIPTION_3);
-        commentDto = new CommentDto(1, COMMENT, USER_NAME_3, LocalDateTime. now());
-        comment = new Comment(COMMENT);
+        itemDto = new ItemDto(1L, name, description, true,
+                new UserDTO(1L, userName), 3);
+        itemDto2 = new ItemDto(2L, name2, description2, false,
+                new UserDTO(2L, userName2), 4);
+        item = new Item(name, description3);
+        commentDto = new CommentDto(1, comment2, userName3, LocalDateTime. now());
+        comment = new Comment(comment2);
         itemDtoList = new ArrayList<>();
         itemDtoList.add(itemDto);
         itemDtoList.add(itemDto2);
@@ -75,18 +75,18 @@ class ItemControllerTest {
         when(itemService.getItems(anyLong()))
                 .thenReturn(itemDtoList);
 
-        mockMvc.perform(get(URL)
-                .header(SharerUserId, 1)
+        mockMvc.perform(get(url)
+                .header(sharerUserId, 1)
                 .contentType(MediaType.APPLICATION_JSON)
         )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[*].id", containsInAnyOrder(1, 2)))
-                .andExpect(jsonPath("$[*].name", containsInAnyOrder(NAME, NAME_2)))
-                .andExpect(jsonPath("$[*].description", containsInAnyOrder(DESCRIPTION, DESCRIPTION_2)))
+                .andExpect(jsonPath("$[*].name", containsInAnyOrder(name, name2)))
+                .andExpect(jsonPath("$[*].description", containsInAnyOrder(description, description2)))
                 .andExpect(jsonPath("$[*].available", containsInAnyOrder(true, false)))
                 .andExpect(jsonPath("$[*].requestId", containsInAnyOrder(3, 4)))
                 .andExpect(jsonPath("$[*].owner.id", containsInAnyOrder(1, 2)))
-                .andExpect(jsonPath("$[*].owner.name", containsInAnyOrder(USER_NAME, USER_NAME_2)));
+                .andExpect(jsonPath("$[*].owner.name", containsInAnyOrder(userName, userName2)));
     }
 
     @Test
@@ -94,18 +94,18 @@ class ItemControllerTest {
         when(itemService.getItems(anyLong(), anyInt(), anyInt()))
                 .thenReturn(itemDtoList);
 
-        mockMvc.perform(get(URL + "?from=0&size=10")
-                        .header(SharerUserId, 1)
+        mockMvc.perform(get(url + "?from=0&size=10")
+                        .header(sharerUserId, 1)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[*].id", containsInAnyOrder(1, 2)))
-                .andExpect(jsonPath("$[*].name", containsInAnyOrder(NAME, NAME_2)))
-                .andExpect(jsonPath("$[*].description", containsInAnyOrder(DESCRIPTION, DESCRIPTION_2)))
+                .andExpect(jsonPath("$[*].name", containsInAnyOrder(name, name2)))
+                .andExpect(jsonPath("$[*].description", containsInAnyOrder(description, description2)))
                 .andExpect(jsonPath("$[*].available", containsInAnyOrder(true, false)))
                 .andExpect(jsonPath("$[*].requestId", containsInAnyOrder(3, 4)))
                 .andExpect(jsonPath("$[*].owner.id", containsInAnyOrder(1, 2)))
-                .andExpect(jsonPath("$[*].owner.name", containsInAnyOrder(USER_NAME, USER_NAME_2)));
+                .andExpect(jsonPath("$[*].owner.name", containsInAnyOrder(userName, userName2)));
     }
 
     @Test
@@ -113,19 +113,19 @@ class ItemControllerTest {
         when(itemService.getById(anyLong(), anyLong()))
                 .thenReturn(itemDto);
 
-        mockMvc.perform(get(URL + "/1")
+        mockMvc.perform(get(url + "/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .accept(MediaType.APPLICATION_JSON)
-                        .header(SharerUserId, 1)
+                        .header(sharerUserId, 1)
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", equalTo(1)))
-                .andExpect(jsonPath("$.name", equalTo(NAME)))
-                .andExpect(jsonPath("$.description", equalTo(DESCRIPTION)))
+                .andExpect(jsonPath("$.name", equalTo(name)))
+                .andExpect(jsonPath("$.description", equalTo(description)))
                 .andExpect(jsonPath("$.available", equalTo(true)))
                 .andExpect(jsonPath("$.owner.id", equalTo(1)))
-                .andExpect(jsonPath("$.owner.name", equalTo(USER_NAME)));
+                .andExpect(jsonPath("$.owner.name", equalTo(userName)));
     }
 
     @Test
@@ -133,20 +133,20 @@ class ItemControllerTest {
         when(itemService.addNewItem(anyLong(), any()))
                 .thenReturn(itemDto);
 
-        mockMvc.perform(post(URL)
+        mockMvc.perform(post(url)
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .content(mapper.writeValueAsString(item))
                         .accept(MediaType.APPLICATION_JSON)
-                        .header(SharerUserId, 1)
+                        .header(sharerUserId, 1)
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", equalTo(1)))
-                .andExpect(jsonPath("$.name", equalTo(NAME)))
-                .andExpect(jsonPath("$.description", equalTo(DESCRIPTION)))
+                .andExpect(jsonPath("$.name", equalTo(name)))
+                .andExpect(jsonPath("$.description", equalTo(description)))
                 .andExpect(jsonPath("$.available", equalTo(true)))
                 .andExpect(jsonPath("$.owner.id", equalTo(1)))
-                .andExpect(jsonPath("$.owner.name", equalTo(USER_NAME)));
+                .andExpect(jsonPath("$.owner.name", equalTo(userName)));
     }
 
     @Test
@@ -154,16 +154,16 @@ class ItemControllerTest {
         when(itemService.updateItem(anyLong(), any(), anyLong()))
                 .thenReturn(item);
 
-        mockMvc.perform(patch(URL + "/1")
+        mockMvc.perform(patch(url + "/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .content(mapper.writeValueAsString(item))
                         .accept(MediaType.APPLICATION_JSON)
-                        .header(SharerUserId, 1)
+                        .header(sharerUserId, 1)
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", equalTo(NAME)))
-                .andExpect(jsonPath("$.description", equalTo(DESCRIPTION_3)));
+                .andExpect(jsonPath("$.name", equalTo(name)))
+                .andExpect(jsonPath("$.description", equalTo(description3)));
     }
 
     @Test
@@ -171,20 +171,20 @@ class ItemControllerTest {
         when(itemService.searchItem(anyLong(), anyString()))
                 .thenReturn(itemDtoList);
 
-        mockMvc.perform(get(URL + "/search?text=стул")
-                        .header(SharerUserId, 1)
+        mockMvc.perform(get(url + "/search?text=стул")
+                        .header(sharerUserId, 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .accept(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[*].id", containsInAnyOrder(1, 2)))
-                .andExpect(jsonPath("$[*].name", containsInAnyOrder(NAME, NAME_2)))
-                .andExpect(jsonPath("$[*].description", containsInAnyOrder(DESCRIPTION, DESCRIPTION_2)))
+                .andExpect(jsonPath("$[*].name", containsInAnyOrder(name, name2)))
+                .andExpect(jsonPath("$[*].description", containsInAnyOrder(description, description2)))
                 .andExpect(jsonPath("$[*].available", containsInAnyOrder(true, false)))
                 .andExpect(jsonPath("$[*].requestId", containsInAnyOrder(3, 4)))
                 .andExpect(jsonPath("$[*].owner.id", containsInAnyOrder(1, 2)))
-                .andExpect(jsonPath("$[*].owner.name", containsInAnyOrder(USER_NAME, USER_NAME_2)));
+                .andExpect(jsonPath("$[*].owner.name", containsInAnyOrder(userName, userName2)));
     }
 
     @Test
@@ -192,26 +192,26 @@ class ItemControllerTest {
         when(itemService.searchItem(anyLong(), anyString(), anyInt(),anyInt()))
                 .thenReturn(itemDtoList);
 
-        mockMvc.perform(get(URL + "/search?text=стул&from=0&size=10")
-                        .header(SharerUserId, 1)
+        mockMvc.perform(get(url + "/search?text=стул&from=0&size=10")
+                        .header(sharerUserId, 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .accept(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[*].id", containsInAnyOrder(1, 2)))
-                .andExpect(jsonPath("$[*].name", containsInAnyOrder(NAME, NAME_2)))
-                .andExpect(jsonPath("$[*].description", containsInAnyOrder(DESCRIPTION, DESCRIPTION_2)))
+                .andExpect(jsonPath("$[*].name", containsInAnyOrder(name, name2)))
+                .andExpect(jsonPath("$[*].description", containsInAnyOrder(description, description2)))
                 .andExpect(jsonPath("$[*].available", containsInAnyOrder(true, false)))
                 .andExpect(jsonPath("$[*].requestId", containsInAnyOrder(3, 4)))
                 .andExpect(jsonPath("$[*].owner.id", containsInAnyOrder(1, 2)))
-                .andExpect(jsonPath("$[*].owner.name", containsInAnyOrder(USER_NAME, USER_NAME_2)));
+                .andExpect(jsonPath("$[*].owner.name", containsInAnyOrder(userName, userName2)));
     }
 
     @Test
     void deleteItemTest() throws Exception {
-        mockMvc.perform(delete(URL + "/1")
-                        .header(SharerUserId, 1)
+        mockMvc.perform(delete(url + "/1")
+                        .header(sharerUserId, 1)
                 )
                 .andExpect(status().isOk());
     }
@@ -221,16 +221,16 @@ class ItemControllerTest {
         when(itemService.addComment(anyLong(), anyLong(), any()))
                 .thenReturn(commentDto);
 
-        mockMvc.perform(post(URL + "/1/comment")
+        mockMvc.perform(post(url + "/1/comment")
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .content(mapper.writeValueAsString(comment))
                         .accept(MediaType.APPLICATION_JSON)
-                        .header(SharerUserId, 1)
+                        .header(sharerUserId, 1)
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", equalTo(1)))
-                .andExpect(jsonPath("$.text", equalTo(COMMENT)))
-                .andExpect(jsonPath("$.authorName", equalTo(USER_NAME_3)));
+                .andExpect(jsonPath("$.text", equalTo(comment2)))
+                .andExpect(jsonPath("$.authorName", equalTo(userName3)));
     }
 }

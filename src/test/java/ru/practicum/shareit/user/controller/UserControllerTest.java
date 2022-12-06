@@ -38,17 +38,17 @@ class UserControllerTest {
     private User user;
     private User user2;
     private List<User> users;
-    private final String URL = "/users";
-    private final String EMAIL = "milo@mail.ru";
-    private final String EMAIL_2 = "milo2@mail.ru";
-    private final String NAME = "name";
-    private final String NAME_2 = "name2";
+    private final String url = "/users";
+    private final String email = "milo@mail.ru";
+    private final String email2 = "milo2@mail.ru";
+    private final String name = "name";
+    private final String name2 = "name2";
 
     @BeforeEach
     void createTest() {
         mapper.registerModule(new JavaTimeModule());
-        user = new User(EMAIL, NAME);
-        user2 = new User(EMAIL_2, NAME_2);
+        user = new User(email, name);
+        user2 = new User(email2, name2);
         users = new ArrayList<>();
         users.add(user);
         users.add(user2);
@@ -59,11 +59,11 @@ class UserControllerTest {
         when(userService.getAllUsers())
                 .thenReturn(users);
 
-        mockMvc.perform(get(URL)
+        mockMvc.perform(get(url)
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[*].name", containsInAnyOrder(NAME, NAME_2)))
-                .andExpect(jsonPath("$[*].email", containsInAnyOrder(EMAIL, EMAIL_2)));
+                .andExpect(jsonPath("$[*].name", containsInAnyOrder(name, name2)))
+                .andExpect(jsonPath("$[*].email", containsInAnyOrder(email, email2)));
     }
 
     @Test
@@ -71,11 +71,11 @@ class UserControllerTest {
         when(userService.getById(anyLong()))
                 .thenReturn(user);
 
-        mockMvc.perform(get(URL + "/1")
+        mockMvc.perform(get(url + "/1")
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", equalTo(NAME)))
-                .andExpect(jsonPath("$.email", equalTo(EMAIL)));
+                .andExpect(jsonPath("$.name", equalTo(name)))
+                .andExpect(jsonPath("$.email", equalTo(email)));
     }
 
     @Test
@@ -83,15 +83,15 @@ class UserControllerTest {
         when(userService.saveUser(any()))
                 .thenReturn(user);
 
-        mockMvc.perform(post(URL)
+        mockMvc.perform(post(url)
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .content(mapper.writeValueAsString(user))
                         .accept(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", equalTo(NAME)))
-                .andExpect(jsonPath("$.email", equalTo(EMAIL)));
+                .andExpect(jsonPath("$.name", equalTo(name)))
+                .andExpect(jsonPath("$.email", equalTo(email)));
     }
 
     @Test
@@ -99,20 +99,20 @@ class UserControllerTest {
         when(userService.updateUser(any(), anyLong()))
                 .thenReturn(user);
 
-        mockMvc.perform(patch(URL + "/1")
+        mockMvc.perform(patch(url + "/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .content(mapper.writeValueAsString(user))
                         .accept(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", equalTo(NAME)))
-                .andExpect(jsonPath("$.email", equalTo(EMAIL)));
+                .andExpect(jsonPath("$.name", equalTo(name)))
+                .andExpect(jsonPath("$.email", equalTo(email)));
     }
 
     @Test
     void deleteUserTest() throws Exception {
-        mockMvc.perform(delete( URL + "/1")
+        mockMvc.perform(delete( url + "/1")
                 )
                 .andExpect(status().isOk());
     }

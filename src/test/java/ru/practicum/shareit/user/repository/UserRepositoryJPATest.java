@@ -16,17 +16,17 @@ import static org.hamcrest.Matchers.equalTo;
 @Sql({"/test-schema.sql", "/test-data.sql"})
 class UserRepositoryJPATest {
 
-    private final String EMAIL = "valera@mail.ru";
+    private final String email = "valera@mail.ru";
 
     @Autowired
     private UserRepositoryJPA userRepositoryJPA;
 
     @Test
     void findByEmail() {
-        User user = userRepositoryJPA.findByEmail(EMAIL).get(0);
+        User user = userRepositoryJPA.findByEmail(email).get(0);
 
         assertThat(user.getId(), equalTo(1L));
         assertThat(user.getName(), equalTo("ValeraTestJPA"));
-        assertThat(user.getEmail(), equalTo(EMAIL));
+        assertThat(user.getEmail(), equalTo(email));
     }
 }

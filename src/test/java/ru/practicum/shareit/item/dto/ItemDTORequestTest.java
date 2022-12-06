@@ -13,15 +13,15 @@ import static org.hamcrest.Matchers.equalTo;
 class ItemDTORequestTest {
 
     private Item item;
-    private final String NAME = "Табуретка";
-    private final String USER_NAME = "name_user";
+    private final String name = "Табуретка";
+    private final String userName = "name_user";
 
     @BeforeEach
     void createTest() {
         ItemRequest itemRequest = new ItemRequest(1L, "описание", LocalDateTime.now(), new ArrayList<>(),
                 new User(2L));
-        item = new Item(1L, NAME, "табуретка на 4-ех ножках", true, itemRequest,
-                new User("test@mail.ru", USER_NAME), new ArrayList<>(), new ArrayList<>());
+        item = new Item(1L, name, "табуретка на 4-ех ножках", true, itemRequest,
+                new User("test@mail.ru", userName), new ArrayList<>(), new ArrayList<>());
     }
 
     @Test
@@ -29,7 +29,7 @@ class ItemDTORequestTest {
         ItemDTORequest itemDTORequest = new ItemDTORequest().toItemDTORequest(item);
 
         assertThat(itemDTORequest.getId(), equalTo(1L));
-        assertThat(itemDTORequest.getName(), equalTo(NAME));
-        assertThat(itemDTORequest.getOwner().getName(), equalTo(USER_NAME));
+        assertThat(itemDTORequest.getName(), equalTo(name));
+        assertThat(itemDTORequest.getOwner().getName(), equalTo(userName));
     }
 }

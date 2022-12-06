@@ -31,14 +31,14 @@ class ItemRequestServiceTest {
     private ItemRequest itemRequest;
     private ItemRequest itemRequest2;
     private User user;
-    private final String DESCRIPTION = "такой запрос";
-    private final String DESCRIPTION_2 = "еще один запрос";
-    private final String DESCRIPTION_3 = "Это самый новый запрос.";
+    private final String string = "такой запрос";
+    private final String description2 = "еще один запрос";
+    private final String description3 = "Это самый новый запрос.";
 
     @BeforeEach
     void createTest() {
-        itemRequest = new ItemRequest(DESCRIPTION);
-        itemRequest2 = new ItemRequest(DESCRIPTION_2);
+        itemRequest = new ItemRequest(string);
+        itemRequest2 = new ItemRequest(description2);
         user = userServiceJPA.saveUser(new User("pochta@mail.ru", "Valera"));
     }
 
@@ -47,7 +47,7 @@ class ItemRequestServiceTest {
         ItemRequestDto itemRequestDto = itemRequestService.addNewRequest(itemRequest, user.getId());
         assertThat(itemRequestDto.getId(), notNullValue());
         assertThat(itemRequestDto.getCreated(), notNullValue());
-        assertThat(itemRequestDto.getDescription(), equalTo(DESCRIPTION));
+        assertThat(itemRequestDto.getDescription(), equalTo(string));
         assertThat(itemRequestDto.getRequestAuthor().getId(), equalTo(user.getId()));
     }
 
@@ -61,11 +61,11 @@ class ItemRequestServiceTest {
         List<ItemRequestDto> itemRequestDtoList = itemRequestService.myRequest(user.getId());
         for (ItemRequestDto i : itemRequestDtoList) {
             if (i.getId() == itemRequestDto1.getId()) {
-                assertThat(itemRequestDto1.getDescription(), equalTo(DESCRIPTION));
+                assertThat(itemRequestDto1.getDescription(), equalTo(string));
                 isRequest1 = true;
             }
             if (i.getId() == itemRequestDto2.getId()) {
-                assertThat(itemRequestDto2.getDescription(), equalTo(DESCRIPTION_2));
+                assertThat(itemRequestDto2.getDescription(), equalTo(description2));
                 isRequest2 = true;
             }
         }
@@ -78,7 +78,7 @@ class ItemRequestServiceTest {
         User userNew = userServiceJPA.saveUser(new User("pochta2@mail.ru", "Valeria"));
         ItemRequestDto itemRequestDto1 = itemRequestService.addNewRequest(itemRequest, user.getId());
         boolean isRequest1 = false;
-        ItemRequest itemRequestNew = new ItemRequest(DESCRIPTION_3);
+        ItemRequest itemRequestNew = new ItemRequest(description3);
         ItemRequestDto itemRequestDto2 = itemRequestService.addNewRequest(itemRequestNew, user.getId());
         boolean isRequest2 = false;
 
@@ -87,11 +87,11 @@ class ItemRequestServiceTest {
 
         for (ItemRequestDto i : itemRequestDtoList) {
             if (i.getId() == itemRequestDto1.getId()) {
-                assertThat(i.getDescription(), equalTo(DESCRIPTION));
+                assertThat(i.getDescription(), equalTo(string));
                 isRequest1 = true;
             }
             if (i.getId() == itemRequestDto2.getId()) {
-                assertThat(i.getDescription(), equalTo(DESCRIPTION_3));
+                assertThat(i.getDescription(), equalTo(description3));
                 isRequest2 = true;
             }
         }
@@ -104,7 +104,7 @@ class ItemRequestServiceTest {
         User userNew = userServiceJPA.saveUser(new User("pochta2@mail.ru", "Valeria"));
         ItemRequestDto itemRequestDto1 = itemRequestService.addNewRequest(itemRequest, user.getId());
         boolean isRequest1 = false;
-        ItemRequest itemRequestNew = new ItemRequest(DESCRIPTION_3);
+        ItemRequest itemRequestNew = new ItemRequest(description3);
         ItemRequestDto itemRequestDto2 = itemRequestService.addNewRequest(itemRequestNew, user.getId());
         boolean isRequest2 = false;
 
@@ -113,11 +113,11 @@ class ItemRequestServiceTest {
 
         for (ItemRequestDto i : itemRequestDtoList) {
             if (i.getId() == itemRequestDto1.getId()) {
-                assertThat(i.getDescription(), equalTo(DESCRIPTION));
+                assertThat(i.getDescription(), equalTo(string));
                 isRequest1 = true;
             }
             if (i.getId() == itemRequestDto2.getId()) {
-                assertThat(i.getDescription(), equalTo(DESCRIPTION_3));
+                assertThat(i.getDescription(), equalTo(description3));
                 isRequest2 = true;
             }
         }
@@ -139,6 +139,6 @@ class ItemRequestServiceTest {
 
         ItemRequestDto itemRequestDto2 = itemRequestService.requestById(user.getId(), itemRequestDto1.getId());
         assertThat(itemRequestDto1.getId(), equalTo(itemRequestDto2.getId()));
-        assertThat(itemRequestDto2.getDescription(), equalTo(DESCRIPTION));
+        assertThat(itemRequestDto2.getDescription(), equalTo(string));
     }
 }

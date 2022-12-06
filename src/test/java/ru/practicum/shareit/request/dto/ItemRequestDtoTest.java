@@ -11,16 +11,16 @@ import static org.hamcrest.Matchers.notNullValue;
 
 class ItemRequestDtoTest {
 
-    private final String DESCRIPTION = "такая информация";
+    private final String description = "такая информация";
 
     @Test
     void toItemRequestDtoTest() {
-        ItemRequest itemRequest = new ItemRequest(1L, DESCRIPTION,
+        ItemRequest itemRequest = new ItemRequest(1L, description,
                 LocalDateTime.now(), new ArrayList<>(), new User(1L));
         ItemRequestDto itemRequestDto = new ItemRequestDto().toItemRequestDto(itemRequest);
         System.out.println(itemRequestDto);
         assertThat(itemRequestDto.getId(), equalTo(1L));
-        assertThat(itemRequestDto.getDescription(), equalTo(DESCRIPTION));
+        assertThat(itemRequestDto.getDescription(), equalTo(description));
         assertThat(itemRequestDto.getCreated(), notNullValue());
         assertThat(itemRequestDto.getRequestAuthor().getId(), equalTo(1L));
     }

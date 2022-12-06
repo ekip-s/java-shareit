@@ -44,17 +44,17 @@ class BookingServiceJPATest {
     private Item item2;
     private BookingDto bookingDto;
     private BookingDto bookingDto2;
-    private final String CHAIR = "Стул";
-    private final String CHAIR_2 = "Стул2";
-    private final String DESCRIPTION = "на четырех ножках";
+    private final String chair = "Стул";
+    private final String chair2 = "Стул2";
+    private final String description = "на четырех ножках";
 
     @BeforeEach
     void createTest() {
         user = userServiceJPA.saveUser(new User("pochta@mail.ru", "Valera"));
         user2 = userServiceJPA.saveUser(new User("pochta2@mail.ru", "Valera2"));
-        item = new Item(1L, CHAIR, DESCRIPTION, true, null,
+        item = new Item(1L, chair, description, true, null,
                 user2, new ArrayList<>(), new ArrayList<>());
-        item2 = new Item(1L, CHAIR_2, "на четырех ножках 2", true, null,
+        item2 = new Item(1L, chair2, "на четырех ножках 2", true, null,
                 user2, new ArrayList<>(), new ArrayList<>());
         itemDto = itemServiceJPA.addNewItem(user.getId(), item);
         itemDto2 = itemServiceJPA.addNewItem(user.getId(), item2);
@@ -70,8 +70,8 @@ class BookingServiceJPATest {
         assertThat(newBooking.getId(), notNullValue());
         assertThat(newBooking.getStart(), notNullValue());
         assertThat(newBooking.getEnd(), notNullValue());
-        assertThat(newBooking.getItem().getName(), equalTo(CHAIR));
-        assertThat(newBooking.getItem().getDescription(), equalTo(DESCRIPTION));
+        assertThat(newBooking.getItem().getName(), equalTo(chair));
+        assertThat(newBooking.getItem().getDescription(), equalTo(description));
         assertThat(newBooking.getItem().getAvailable(), equalTo(true));
         assertThat(newBooking.getStatus(), equalTo(BookingStatus.WAITING));
         bookingDto.setStart(LocalDateTime.now().minusHours(3));
@@ -90,8 +90,8 @@ class BookingServiceJPATest {
         assertThat(newBookingSet.getId(), notNullValue());
         assertThat(newBookingSet.getStart(), notNullValue());
         assertThat(newBookingSet.getEnd(), notNullValue());
-        assertThat(newBookingSet.getItem().getName(), equalTo(CHAIR));
-        assertThat(newBookingSet.getItem().getDescription(), equalTo(DESCRIPTION));
+        assertThat(newBookingSet.getItem().getName(), equalTo(chair));
+        assertThat(newBookingSet.getItem().getDescription(), equalTo(description));
         assertThat(newBookingSet.getItem().getAvailable(), equalTo(true));
         assertThat(newBookingSet.getStatus(), equalTo(BookingStatus.APPROVED));
         Booking newBooking2 = bookingServiceJPA.addBooking(user2.getId(), bookingDto2);
@@ -111,16 +111,16 @@ class BookingServiceJPATest {
         assertThat(booking3.getId(), notNullValue());
         assertThat(booking3.getStart(), notNullValue());
         assertThat(booking3.getEnd(), notNullValue());
-        assertThat(booking3.getItem().getName(), equalTo(CHAIR));
-        assertThat(booking3.getItem().getDescription(), equalTo(DESCRIPTION));
+        assertThat(booking3.getItem().getName(), equalTo(chair));
+        assertThat(booking3.getItem().getDescription(), equalTo(description));
         assertThat(booking3.getItem().getAvailable(), equalTo(true));
         assertThat(booking3.getStatus(), equalTo(BookingStatus.WAITING));
         Booking booking4 = bookingServiceJPA.getById(newBooking.getId(), user2.getId());
         assertThat(booking4.getId(), notNullValue());
         assertThat(booking4.getStart(), notNullValue());
         assertThat(booking4.getEnd(), notNullValue());
-        assertThat(booking4.getItem().getName(), equalTo(CHAIR));
-        assertThat(booking4.getItem().getDescription(), equalTo(DESCRIPTION));
+        assertThat(booking4.getItem().getName(), equalTo(chair));
+        assertThat(booking4.getItem().getDescription(), equalTo(description));
         assertThat(booking4.getItem().getAvailable(), equalTo(true));
         assertThat(booking4.getStatus(), equalTo(BookingStatus.WAITING));
     }
@@ -132,8 +132,8 @@ class BookingServiceJPATest {
         assertThat(booking3.getId(), notNullValue());
         assertThat(booking3.getStart(), notNullValue());
         assertThat(booking3.getEnd(), notNullValue());
-        assertThat(booking3.getItem().getName(), equalTo(CHAIR));
-        assertThat(booking3.getItem().getDescription(), equalTo(DESCRIPTION));
+        assertThat(booking3.getItem().getName(), equalTo(chair));
+        assertThat(booking3.getItem().getDescription(), equalTo(description));
         assertThat(booking3.getItem().getAvailable(), equalTo(true));
         assertThat(booking3.getStatus(), equalTo(BookingStatus.WAITING));
     }

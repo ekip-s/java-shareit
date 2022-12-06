@@ -8,15 +8,15 @@ import static org.hamcrest.Matchers.equalTo;
 
 class UserDTOTest {
 
-    private final String NAME = "name";
+    private final String name = "name";
 
     @Test
     void toUserDTOTest() {
-        User user = new User(1L, "test@mail.ru", NAME, new ArrayList<>(), new ArrayList<>(),
+        User user = new User(1L, "test@mail.ru", name, new ArrayList<>(), new ArrayList<>(),
                 new ArrayList<>(), new ArrayList<>());
         UserDTO userDTO = new UserDTO().toUserDTO(user);
 
         assertThat(userDTO.getId(), equalTo(1L));
-        assertThat(userDTO.getName(), equalTo(NAME));
+        assertThat(userDTO.getName(), equalTo(name));
     }
 }

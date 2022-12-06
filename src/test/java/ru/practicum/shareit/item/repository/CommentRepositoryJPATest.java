@@ -21,16 +21,16 @@ class CommentRepositoryJPATest {
 
     @Autowired
     private CommentRepositoryJPA commentRepositoryJPA;
-    private final String COMMENT = "такой комментарий";
+    private final String comment = "такой комментарий";
 
     @Test
     void findByItemOrderByCreatedTest() {
-        Comment comment = new Comment(COMMENT);
+        Comment comment = new Comment(this.comment);
         comment.setItemAndAuthor(new Item(1L), new User(1L));
         commentRepositoryJPA.save(comment);
         List<Comment> commentList = commentRepositoryJPA.findByItemOrderByCreated(new Item(1L));
 
         assertThat(commentList.get(0).getId(), equalTo(1L));
-        assertThat(commentList.get(0).getText(), equalTo(COMMENT));
+        assertThat(commentList.get(0).getText(), equalTo(this.comment));
     }
 }
