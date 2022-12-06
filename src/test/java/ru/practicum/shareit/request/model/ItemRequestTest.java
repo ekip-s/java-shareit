@@ -9,6 +9,7 @@ import static org.hamcrest.Matchers.equalTo;
 class ItemRequestTest {
 
     private final String description = "такое описание";
+
     @Test
     void testModel() {
         ItemRequest itemRequest = new ItemRequest(1L);
