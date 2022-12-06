@@ -24,17 +24,17 @@ class ItemTest {
         assertThat(item2.getName(), equalTo(name));
         assertThat(item2.getDescription(), equalTo(description));
         assertThat(item2.getRequestId().getId(), equalTo(1L));
-        Item Item3 = new Item(1L);
-        assertThat(Item3.getId(), equalTo(1L));
-        Item Item4 = new Item(1L, name, description, true, new ItemRequest(3L),
+        Item item3 = new Item(1L);
+        assertThat(item3.getId(), equalTo(1L));
+        Item item4 = new Item(1L, name, description, true, new ItemRequest(3L),
                 new User(2L), new ArrayList<>(), new ArrayList<>());
-        assertThat(Item4.getId(), equalTo(1L));
-        assertThat(Item4.getName(), equalTo(name));
-        assertThat(Item4.getDescription(), equalTo(description));
-        assertThat(Item4.getAvailable(), equalTo(true));
-        assertThat(Item4.getRequestId().getId(), equalTo(3L));
-        assertThat(Item4.getOwner().getId(), equalTo(2L));
-        assertThat(Item4.getBookings().isEmpty(), equalTo(true));
-        assertThat(Item4.getComments().isEmpty(), equalTo(true));
+        assertThat(item4.getId(), equalTo(1L));
+        assertThat(item4.getName(), equalTo(name));
+        assertThat(item4.getDescription(), equalTo(description));
+        assertThat(item4.getAvailable(), equalTo(true));
+        assertThat(item4.getRequestId().getId(), equalTo(3L));
+        assertThat(item4.getOwner().getId(), equalTo(2L));
+        assertThat(item4.getBookings().isEmpty(), equalTo(true));
+        assertThat(item4.getComments().isEmpty(), equalTo(true));
     }
 }
