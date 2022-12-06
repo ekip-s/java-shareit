@@ -112,7 +112,7 @@ class UserControllerTest {
 
     @Test
     void deleteUserTest() throws Exception {
-        mockMvc.perform(delete( url + "/1")
+        mockMvc.perform(delete(url + "/1")
                 )
                 .andExpect(status().isOk());
     }
