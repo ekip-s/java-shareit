@@ -10,7 +10,6 @@ import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserServiceJPA;
@@ -31,24 +30,32 @@ class ItemServiceJPATest {
     private final UserServiceJPA userServiceJPA;
     private final ItemRequestService itemRequestService;
 
-    User user;
-    Item item;
-    ItemRequest itemRequest;
+    private User user;
+    private Item item;
+    private final String STOOL = "Табуретка";
+    private final String STOOL_2 = "Стул";
+    private final String STOOL_99 = "Табуретка99";
+    private final String STOOL_666 = "Табуретка666";
+    private final String DESCRIPTION = "табуретка на 4-ех ножках";
+    private final String DESCRIPTION_2 = "Ваза в вИзаНтиЙсКом стиле";
+    private final String ERROR = "Нет товара с таким id.";
+    private final String VASE = "Ваза";
+    private final String SEARCH_QUERY = "византий";
 
     @BeforeEach
-    void createTest() {
+    void createItemTest() {
         user = new User("test@mail.ru", "name_user");
-        item = new Item("Табуретка", "табуретка на 4-ех ножках");
+        item = new Item(STOOL, DESCRIPTION);
         userServiceJPA.saveUser(user);
     }
 
     @Test
-    void getItems() {
-        Item itemTest99 = new Item("Табуретка99", "табуретка на 4-ех ножках");
+    void getItemsTest() {
+        Item itemTest99 = new Item(STOOL_99, DESCRIPTION);
         itemTest99.setAvailable(true);
         ItemDto itemDto99 = itemServiceJPA.addNewItem(user.getId(), itemTest99);
         boolean isItemDto99 = false;
-        Item itemTest666 = new Item("Табуретка666", "табуретка на 4-ех ножках");
+        Item itemTest666 = new Item(STOOL_666, DESCRIPTION);
         itemTest666.setAvailable(true);
         ItemDto itemDto666 = itemServiceJPA.addNewItem(user.getId(), itemTest666);
         boolean isItemDto666 = false;
@@ -56,11 +63,11 @@ class ItemServiceJPATest {
         List<ItemDto> itemDtoList = itemServiceJPA.getItems(user.getId());
         for (ItemDto i : itemDtoList) {
             if (i.getId() == itemDto99.getId()) {
-                assertThat(i.getName(), equalTo("Табуретка99"));
+                assertThat(i.getName(), equalTo(STOOL_99));
                 isItemDto99 = true;
             }
             if (i.getId() == itemDto666.getId()) {
-                assertThat(i.getName(), equalTo("Табуретка666"));
+                assertThat(i.getName(), equalTo(STOOL_666));
                 isItemDto666 = true;
             }
         }
@@ -69,12 +76,12 @@ class ItemServiceJPATest {
     }
 
     @Test
-    void getItemsPage() {
-        Item itemTest99 = new Item("Табуретка99", "табуретка на 4-ех ножках");
+    void getItemsPageTest() {
+        Item itemTest99 = new Item(STOOL_99, DESCRIPTION);
         itemTest99.setAvailable(true);
         ItemDto itemDto99 = itemServiceJPA.addNewItem(user.getId(), itemTest99);
         boolean isItemDto99 = false;
-        Item itemTest666 = new Item("Табуретка666", "табуретка на 4-ех ножках");
+        Item itemTest666 = new Item(STOOL_666, DESCRIPTION);
         itemTest666.setAvailable(true);
         ItemDto itemDto666 = itemServiceJPA.addNewItem(user.getId(), itemTest666);
         boolean isItemDto666 = false;
@@ -82,11 +89,11 @@ class ItemServiceJPATest {
         List<ItemDto> itemDtoList = itemServiceJPA.getItems(user.getId(), 0,6);
         for (ItemDto i : itemDtoList) {
             if (i.getId() == itemDto99.getId()) {
-                assertThat(i.getName(), equalTo("Табуретка99"));
+                assertThat(i.getName(), equalTo(STOOL_99));
                 isItemDto99 = true;
             }
             if (i.getId() == itemDto666.getId()) {
-                assertThat(i.getName(), equalTo("Табуретка666"));
+                assertThat(i.getName(), equalTo(STOOL_666));
                 isItemDto666 = true;
             }
         }
@@ -95,44 +102,44 @@ class ItemServiceJPATest {
     }
 
     @Test
-    void getById() {
+    void getByIdTest() {
         Throwable thrown = assertThrows(IllegalArgumentException.class, () -> {
             itemServiceJPA.getById(1,156L);
         });
-        assertThat(thrown.getMessage(), equalTo("Нет товара с таким id."));
+        assertThat(thrown.getMessage(), equalTo(ERROR));
 
         item.setAvailable(true);
         ItemDto itemDto = itemServiceJPA.addNewItem(user.getId(), item);
         ItemDto newItem = itemServiceJPA.getById(user.getId(),itemDto.getId());
 
         assertThat(itemDto.getId(), equalTo(newItem.getId()));
-        assertThat(newItem.getName(), equalTo("Табуретка"));
-        assertThat(newItem.getDescription(), equalTo("табуретка на 4-ех ножках"));
+        assertThat(newItem.getName(), equalTo(STOOL));
+        assertThat(newItem.getDescription(), equalTo(DESCRIPTION));
         }
 
     @Test
-    void addNewItem() {
+    void addNewItemTest() {
         item.setAvailable(true);
         ItemDto itemDto = itemServiceJPA.addNewItem(user.getId(), item);
 
         assertThat(itemDto.getOwner().getId(), equalTo(user.getId()));
-        assertThat(itemDto.getName(), equalTo("Табуретка"));
-        assertThat(itemDto.getDescription(), equalTo("табуретка на 4-ех ножках"));
+        assertThat(itemDto.getName(), equalTo(STOOL));
+        assertThat(itemDto.getDescription(), equalTo(DESCRIPTION));
         assertThat(itemDto.getAvailable(), equalTo(true));
     }
 
     @Test
-    void updateItem() {
+    void updateItemTest() {
         item.setAvailable(true);
         ItemDto itemDto = itemServiceJPA.addNewItem(user.getId(), item);
-        item.setName("Стул");
+        item.setName(STOOL_2);
         Item updateItem = itemServiceJPA.updateItem(user.getId(), item, itemDto.getId());
         assertThat(updateItem.getId(), equalTo(itemDto.getId()));
-        assertThat(updateItem.getName(), equalTo("Стул"));
+        assertThat(updateItem.getName(), equalTo(STOOL_2));
     }
 
     @Test
-    void deleteItem() {
+    void deleteItemTest() {
         item.setAvailable(true);
         ItemDto itemDto = itemServiceJPA.addNewItem(user.getId(), item);
         itemServiceJPA.getById(user.getId(), itemDto.getId());
@@ -141,41 +148,41 @@ class ItemServiceJPATest {
         Throwable thrown = assertThrows(IllegalArgumentException.class, () -> {
             itemServiceJPA.getById(user.getId(),itemDto.getId());
         });
-        assertThat(thrown.getMessage(), equalTo("Нет товара с таким id."));
+        assertThat(thrown.getMessage(), equalTo(ERROR));
     }
 
     @Test
-    void searchItem() {
-        Item newItem = new Item("Ваза","Ваза в вИзаНтиЙсКом стиле");
+    void searchItemTest() {
+        Item newItem = new Item(VASE,DESCRIPTION_2);
         newItem.setAvailable(true);
 
         ItemDto itemDto = itemServiceJPA.addNewItem(user.getId(), newItem);
-        List<ItemDto> itemDtoList = itemServiceJPA.searchItem(user.getId(), "византий");
+        List<ItemDto> itemDtoList = itemServiceJPA.searchItem(user.getId(), SEARCH_QUERY);
 
         assertThat(itemDtoList.size(), equalTo(1));
         assertThat(itemDtoList.get(0).getId(), equalTo(itemDto.getId()));
-        assertThat(itemDtoList.get(0).getName(), equalTo("Ваза"));
-        assertThat(itemDtoList.get(0).getDescription(), equalTo("Ваза в вИзаНтиЙсКом стиле"));
+        assertThat(itemDtoList.get(0).getName(), equalTo(VASE));
+        assertThat(itemDtoList.get(0).getDescription(), equalTo(DESCRIPTION_2));
         itemServiceJPA.searchItem(user.getId(), "");
     }
 
     @Test
-    void searchItemPage() {
-        Item newItem = new Item("Ваза","Ваза в вИзаНтиЙсКом стиле");
+    void searchItemPageTest() {
+        Item newItem = new Item(VASE,DESCRIPTION_2);
         newItem.setAvailable(true);
 
         ItemDto itemDto = itemServiceJPA.addNewItem(user.getId(), newItem);
-        List<ItemDto> itemDtoList = itemServiceJPA.searchItem(user.getId(), "византий", 0, 1);
+        List<ItemDto> itemDtoList = itemServiceJPA.searchItem(user.getId(), SEARCH_QUERY, 0, 1);
 
         assertThat(itemDtoList.size(), equalTo(1));
         assertThat(itemDtoList.get(0).getId(), equalTo(itemDto.getId()));
-        assertThat(itemDtoList.get(0).getName(), equalTo("Ваза"));
-        assertThat(itemDtoList.get(0).getDescription(), equalTo("Ваза в вИзаНтиЙсКом стиле"));
+        assertThat(itemDtoList.get(0).getName(), equalTo(VASE));
+        assertThat(itemDtoList.get(0).getDescription(), equalTo(DESCRIPTION_2));
         itemServiceJPA.searchItem(user.getId(), "", 0, 1);
     }
 
     @Test
-    void addComment() {
+    void addCommentTest() {
         item.setAvailable(true);
         ItemDto itemDto = itemServiceJPA.addNewItem(user.getId(), item);
 

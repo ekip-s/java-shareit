@@ -10,7 +10,7 @@ import static org.hamcrest.Matchers.equalTo;
 class BookingTest {
 
     @Test
-    void truncateResponse() {
+    void truncateResponseTest() {
         Booking booking = new Booking(LocalDateTime.now().plusHours(1), LocalDateTime.now().plusHours(6),
                 new Item("name", "description"), new User(1L));
         booking = booking.truncateResponse();

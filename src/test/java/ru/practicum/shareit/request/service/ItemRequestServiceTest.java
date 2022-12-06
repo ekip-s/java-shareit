@@ -31,25 +31,28 @@ class ItemRequestServiceTest {
     private ItemRequest itemRequest;
     private ItemRequest itemRequest2;
     private User user;
+    private final String DESCRIPTION = "такой запрос";
+    private final String DESCRIPTION_2 = "еще один запрос";
+    private final String DESCRIPTION_3 = "Это самый новый запрос.";
 
     @BeforeEach
     void createTest() {
-        itemRequest = new ItemRequest("такой запрос");
-        itemRequest2 = new ItemRequest("еще один запрос");
+        itemRequest = new ItemRequest(DESCRIPTION);
+        itemRequest2 = new ItemRequest(DESCRIPTION_2);
         user = userServiceJPA.saveUser(new User("pochta@mail.ru", "Valera"));
     }
 
     @Test
-    void addNewRequest() {
+    void addNewRequestTest() {
         ItemRequestDto itemRequestDto = itemRequestService.addNewRequest(itemRequest, user.getId());
         assertThat(itemRequestDto.getId(), notNullValue());
         assertThat(itemRequestDto.getCreated(), notNullValue());
-        assertThat(itemRequestDto.getDescription(), equalTo("такой запрос"));
+        assertThat(itemRequestDto.getDescription(), equalTo(DESCRIPTION));
         assertThat(itemRequestDto.getRequestAuthor().getId(), equalTo(user.getId()));
     }
 
     @Test
-    void myRequest() {
+    void myRequestTest() {
         ItemRequestDto itemRequestDto1 = itemRequestService.addNewRequest(itemRequest, user.getId());
         boolean isRequest1 = false;
         ItemRequestDto itemRequestDto2 = itemRequestService.addNewRequest(itemRequest2, user.getId());
@@ -58,11 +61,11 @@ class ItemRequestServiceTest {
         List<ItemRequestDto> itemRequestDtoList = itemRequestService.myRequest(user.getId());
         for (ItemRequestDto i : itemRequestDtoList) {
             if (i.getId() == itemRequestDto1.getId()) {
-                assertThat(itemRequestDto1.getDescription(), equalTo("такой запрос"));
+                assertThat(itemRequestDto1.getDescription(), equalTo(DESCRIPTION));
                 isRequest1 = true;
             }
             if (i.getId() == itemRequestDto2.getId()) {
-                assertThat(itemRequestDto2.getDescription(), equalTo("еще один запрос"));
+                assertThat(itemRequestDto2.getDescription(), equalTo(DESCRIPTION_2));
                 isRequest2 = true;
             }
         }
@@ -71,11 +74,11 @@ class ItemRequestServiceTest {
     }
 
     @Test
-    void strangerRequest() {
+    void strangerRequestTest() {
         User userNew = userServiceJPA.saveUser(new User("pochta2@mail.ru", "Valeria"));
         ItemRequestDto itemRequestDto1 = itemRequestService.addNewRequest(itemRequest, user.getId());
         boolean isRequest1 = false;
-        ItemRequest itemRequestNew = new ItemRequest("Это самый новый запрос.");
+        ItemRequest itemRequestNew = new ItemRequest(DESCRIPTION_3);
         ItemRequestDto itemRequestDto2 = itemRequestService.addNewRequest(itemRequestNew, user.getId());
         boolean isRequest2 = false;
 
@@ -84,11 +87,11 @@ class ItemRequestServiceTest {
 
         for (ItemRequestDto i : itemRequestDtoList) {
             if (i.getId() == itemRequestDto1.getId()) {
-                assertThat(i.getDescription(), equalTo("такой запрос"));
+                assertThat(i.getDescription(), equalTo(DESCRIPTION));
                 isRequest1 = true;
             }
             if (i.getId() == itemRequestDto2.getId()) {
-                assertThat(i.getDescription(), equalTo("Это самый новый запрос."));
+                assertThat(i.getDescription(), equalTo(DESCRIPTION_3));
                 isRequest2 = true;
             }
         }
@@ -97,11 +100,11 @@ class ItemRequestServiceTest {
     }
 
     @Test
-    void strangerRequestPage() {
+    void strangerRequestPageTest() {
         User userNew = userServiceJPA.saveUser(new User("pochta2@mail.ru", "Valeria"));
         ItemRequestDto itemRequestDto1 = itemRequestService.addNewRequest(itemRequest, user.getId());
         boolean isRequest1 = false;
-        ItemRequest itemRequestNew = new ItemRequest("Это самый новый запрос.");
+        ItemRequest itemRequestNew = new ItemRequest(DESCRIPTION_3);
         ItemRequestDto itemRequestDto2 = itemRequestService.addNewRequest(itemRequestNew, user.getId());
         boolean isRequest2 = false;
 
@@ -110,11 +113,11 @@ class ItemRequestServiceTest {
 
         for (ItemRequestDto i : itemRequestDtoList) {
             if (i.getId() == itemRequestDto1.getId()) {
-                assertThat(i.getDescription(), equalTo("такой запрос"));
+                assertThat(i.getDescription(), equalTo(DESCRIPTION));
                 isRequest1 = true;
             }
             if (i.getId() == itemRequestDto2.getId()) {
-                assertThat(i.getDescription(), equalTo("Это самый новый запрос."));
+                assertThat(i.getDescription(), equalTo(DESCRIPTION_3));
                 isRequest2 = true;
             }
         }
@@ -123,7 +126,7 @@ class ItemRequestServiceTest {
     }
 
     @Test
-    void requestById() {
+    void requestByIdTest() {
         ItemRequestDto itemRequestDto1 = itemRequestService.addNewRequest(itemRequest, user.getId());
         Throwable thrown = assertThrows(ConflictException.class, () -> {
             itemRequestService.requestById(100500, itemRequestDto1.getId());
@@ -136,6 +139,6 @@ class ItemRequestServiceTest {
 
         ItemRequestDto itemRequestDto2 = itemRequestService.requestById(user.getId(), itemRequestDto1.getId());
         assertThat(itemRequestDto1.getId(), equalTo(itemRequestDto2.getId()));
-        assertThat(itemRequestDto2.getDescription(), equalTo("такой запрос"));
+        assertThat(itemRequestDto2.getDescription(), equalTo(DESCRIPTION));
     }
 }

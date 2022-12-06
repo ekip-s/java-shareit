@@ -43,17 +43,22 @@ class ItemRequestControllerTest {
     private ItemRequestDto itemRequestDto;
     private ItemRequestDto itemRequestDto2;
     private List<ItemRequestDto> itemRequestDtoList;
-
+    private String SharerUserId = "X-Sharer-User-Id";
+    private final String URL = "/requests";
+    private final String REQUEST = "Запрос";
+    private final String REQUEST_2 = "Запрос2";
+    private final String NAME = "name";
+    private final String NAME_2 = "name2";
 
     @BeforeEach
     void createTest() {
         mapper.registerModule(new JavaTimeModule());
-        itemRequest = new ItemRequest(1L, "Запрос", LocalDateTime. now(),
-                new ArrayList<>(), new User("milo@mail.ru", "name"));
-        itemRequestDto = new ItemRequestDto(1L, "Запрос", LocalDateTime. now(), new ArrayList<>(),
-                new UserDTO(1L, "name"));
-        itemRequestDto2 = new ItemRequestDto(2L, "Запрос2", LocalDateTime. now(), new ArrayList<>(),
-                new UserDTO(1L, "name2"));
+        itemRequest = new ItemRequest(1L, REQUEST, LocalDateTime. now(),
+                new ArrayList<>(), new User("milo@mail.ru", NAME));
+        itemRequestDto = new ItemRequestDto(1L, REQUEST, LocalDateTime. now(), new ArrayList<>(),
+                new UserDTO(1L, NAME));
+        itemRequestDto2 = new ItemRequestDto(2L, REQUEST_2, LocalDateTime. now(), new ArrayList<>(),
+                new UserDTO(1L, NAME_2));
 
         itemRequestDtoList = new ArrayList<>();
         itemRequestDtoList.add(itemRequestDto);
@@ -61,82 +66,82 @@ class ItemRequestControllerTest {
     }
 
     @Test
-    void addNewRequest() throws Exception {
+    void addNewRequestTest() throws Exception {
         when(itemRequestService.addNewRequest(any(), anyLong()))
                 .thenReturn(itemRequestDto);
 
-        mockMvc.perform(post("/requests")
+        mockMvc.perform(post(URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .content(mapper.writeValueAsString(itemRequest))
                         .accept(MediaType.APPLICATION_JSON)
-                        .header("X-Sharer-User-Id", 1)
+                        .header(SharerUserId, 1)
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", equalTo(1)))
-                .andExpect(jsonPath("$.description", equalTo("Запрос")))
+                .andExpect(jsonPath("$.description", equalTo(REQUEST)))
                 .andExpect(jsonPath("$.requestAuthor.id", equalTo(1)))
-                .andExpect(jsonPath("$.requestAuthor.name", equalTo("name")));
+                .andExpect(jsonPath("$.requestAuthor.name", equalTo(NAME)));
     }
 
     @Test
-    void myRequest() throws Exception {
+    void myRequestTest() throws Exception {
         when(itemRequestService.myRequest(anyLong()))
                 .thenReturn(itemRequestDtoList);
 
-        mockMvc.perform(get("/requests")
-                        .header("X-Sharer-User-Id", 1)
+        mockMvc.perform(get(URL)
+                        .header(SharerUserId, 1)
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[*].id", containsInAnyOrder(1, 2)))
-                .andExpect(jsonPath("$[*].description", containsInAnyOrder("Запрос", "Запрос2")))
+                .andExpect(jsonPath("$[*].description", containsInAnyOrder(REQUEST, REQUEST_2)))
                 .andExpect(jsonPath("$[*].requestAuthor.id", containsInAnyOrder(1, 1)))
-                .andExpect(jsonPath("$[*].requestAuthor.name", containsInAnyOrder("name", "name2")));
+                .andExpect(jsonPath("$[*].requestAuthor.name", containsInAnyOrder(NAME, NAME_2)));
     }
 
     @Test
-    void strangerRequest() throws Exception {
+    void strangerRequestTest() throws Exception {
         when(itemRequestService.strangerRequest(anyLong()))
                 .thenReturn(itemRequestDtoList);
 
-        mockMvc.perform(get("/requests/all")
-                        .header("X-Sharer-User-Id", 1)
+        mockMvc.perform(get(URL + "/all")
+                        .header(SharerUserId, 1)
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[*].id", containsInAnyOrder(1, 2)))
-                .andExpect(jsonPath("$[*].description", containsInAnyOrder("Запрос", "Запрос2")))
+                .andExpect(jsonPath("$[*].description", containsInAnyOrder(REQUEST, REQUEST_2)))
                 .andExpect(jsonPath("$[*].requestAuthor.id", containsInAnyOrder(1, 1)))
-                .andExpect(jsonPath("$[*].requestAuthor.name", containsInAnyOrder("name", "name2")));
+                .andExpect(jsonPath("$[*].requestAuthor.name", containsInAnyOrder(NAME, NAME_2)));
     }
 
     @Test
-    void strangerRequestPage() throws Exception {
+    void strangerRequestPageTest() throws Exception {
         when(itemRequestService.strangerRequest(anyLong(), anyInt(), anyInt()))
                 .thenReturn(itemRequestDtoList);
 
-        mockMvc.perform(get("/requests/all?from=0&size=10")
-                        .header("X-Sharer-User-Id", 1)
+        mockMvc.perform(get(URL + "/all?from=0&size=10")
+                        .header(SharerUserId, 1)
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[*].id", containsInAnyOrder(1, 2)))
-                .andExpect(jsonPath("$[*].description", containsInAnyOrder("Запрос", "Запрос2")))
+                .andExpect(jsonPath("$[*].description", containsInAnyOrder(REQUEST, REQUEST_2)))
                 .andExpect(jsonPath("$[*].requestAuthor.id", containsInAnyOrder(1, 1)))
-                .andExpect(jsonPath("$[*].requestAuthor.name", containsInAnyOrder("name", "name2")));
+                .andExpect(jsonPath("$[*].requestAuthor.name", containsInAnyOrder(NAME, NAME_2)));
     }
 
     @Test
-    void requestById() throws Exception {
+    void requestByIdTest() throws Exception {
         when(itemRequestService.requestById(anyLong(), anyLong()))
                 .thenReturn(itemRequestDto2);
 
-        mockMvc.perform(get("/requests/1")
+        mockMvc.perform(get(URL + "/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("X-Sharer-User-Id", 1)
+                        .header(SharerUserId, 1)
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", equalTo(2)))
-                .andExpect(jsonPath("$.description", equalTo("Запрос2")))
+                .andExpect(jsonPath("$.description", equalTo(REQUEST_2)))
                 .andExpect(jsonPath("$.requestAuthor.id", equalTo(1)))
-                .andExpect(jsonPath("$.requestAuthor.name", equalTo("name2")));
+                .andExpect(jsonPath("$.requestAuthor.name", equalTo(NAME_2)));
     }
 }

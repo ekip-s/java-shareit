@@ -33,7 +33,7 @@ class BookingControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
-    ObjectMapper mapper;
+    private ObjectMapper mapper;
     @MockBean
     private BookingServiceJPA bookingService;
     private BookingDto bookingDto;
@@ -42,6 +42,14 @@ class BookingControllerTest {
     private LocalDateTime start;
     private LocalDateTime end;
     private List<Booking> bookings;
+    private final String SharerUserId = "X-Sharer-User-Id";
+    private final String URL = "/bookings";
+    private final String NAME = "name";
+    private final String NAME_2 = "name2";
+    private final String DESCRIPTION = "description";
+    private final String DESCRIPTION_2 = "description2";
+    private final String WAITING = "WAITING";
+    private final String APPROVED = "APPROVED";
 
     @BeforeEach
     void createTest() {
@@ -51,9 +59,9 @@ class BookingControllerTest {
         start = LocalDateTime. now().plusHours(2);
         end = LocalDateTime. now().plusHours(8);
         bookingDto = new BookingDto(0, start, end,1);
-        booking = new Booking(1, start, end, new Item("name", "description"),
+        booking = new Booking(1, start, end, new Item(NAME, DESCRIPTION),
                 new User(1L), BookingStatus.WAITING);
-        booking2 = new Booking(2, start, end, new Item("name2", "description2"),
+        booking2 = new Booking(2, start, end, new Item(NAME_2, DESCRIPTION_2),
                 new User(1L), BookingStatus.APPROVED);
         bookings = new ArrayList();
         bookings.add(booking);
@@ -61,112 +69,112 @@ class BookingControllerTest {
     }
 
     @Test
-    void addBooking_newBooking() throws Exception {
+    void addNewBookingTest() throws Exception {
         when(bookingService.addBooking(any(), any()))
                 .thenReturn(booking);
 
-        mockMvc.perform(post("/bookings")
+        mockMvc.perform(post(URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(bookingDto))
-                .header("X-Sharer-User-Id", 1)
+                .header(SharerUserId, 1)
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.item.name", equalTo("name")));
+                .andExpect(jsonPath("$.item.name", equalTo(NAME)));
     }
 
     @Test
-    void setStatus() throws Exception {
+    void setStatusTest() throws Exception {
         bookingDto.setId(1);
         booking.setStatus(BookingStatus.APPROVED);
         when(bookingService.setStatus(anyLong(), anyLong(), anyBoolean()))
                 .thenReturn(booking);
 
-        mockMvc.perform(patch("/bookings/1?approved=true")
+        mockMvc.perform(patch(URL + "/1?approved=true")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(bookingDto))
-                        .header("X-Sharer-User-Id", 1)
+                        .header(SharerUserId, 1)
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status", equalTo("APPROVED")));
+                .andExpect(jsonPath("$.status", equalTo(APPROVED)));
     }
 
     @Test
-    void getBookingById() throws Exception {
+    void getBookingByIdTest() throws Exception {
         when(bookingService.getById(anyLong(), anyLong()))
                 .thenReturn(booking);
 
-        mockMvc.perform(get("/bookings/1")
+        mockMvc.perform(get(URL + "/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("X-Sharer-User-Id", 1)
+                        .header(SharerUserId, 1)
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", equalTo(1)))
-                .andExpect(jsonPath("$.status", equalTo("WAITING")))
-                .andExpect(jsonPath("$.item.name", equalTo("name")))
-                .andExpect(jsonPath("$.item.description", equalTo("description")));
+                .andExpect(jsonPath("$.status", equalTo(WAITING)))
+                .andExpect(jsonPath("$.item.name", equalTo(NAME)))
+                .andExpect(jsonPath("$.item.description", equalTo(DESCRIPTION)));
     }
 
     @Test
-    void getBookings() throws Exception {
+    void getBookingsListTest() throws Exception {
         when(bookingService.getBookings(anyLong(), any()))
                 .thenReturn(bookings);
 
-        mockMvc.perform(get("/bookings")
-                .header("X-Sharer-User-Id", 1)
+        mockMvc.perform(get(URL)
+                .header(SharerUserId, 1)
         )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[*].id", containsInAnyOrder(1, 2)))
-                .andExpect(jsonPath("$[*].status", containsInAnyOrder("WAITING", "APPROVED")))
-                .andExpect(jsonPath("$[*].item.name", containsInAnyOrder("name", "name2")))
-                .andExpect(jsonPath("$[*].item.description", containsInAnyOrder("description",
-                        "description2")));
+                .andExpect(jsonPath("$[*].status", containsInAnyOrder(WAITING, APPROVED)))
+                .andExpect(jsonPath("$[*].item.name", containsInAnyOrder(NAME, NAME_2)))
+                .andExpect(jsonPath("$[*].item.description", containsInAnyOrder(DESCRIPTION,
+                        DESCRIPTION_2)));
     }
 
     @Test
-    void getBookingsPage() throws Exception {
+    void getBookingsListPageTest() throws Exception {
         when(bookingService.getBookings(anyLong(), any(), anyInt(), anyInt()))
                 .thenReturn(bookings);
 
-        mockMvc.perform(get("/bookings?from=0&size=10")
-                .header("X-Sharer-User-Id", 1)
+        mockMvc.perform(get(URL + "?from=0&size=10")
+                .header(SharerUserId, 1)
         )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[*].id", containsInAnyOrder(1, 2)))
-                .andExpect(jsonPath("$[*].status", containsInAnyOrder("WAITING", "APPROVED")))
-                .andExpect(jsonPath("$[*].item.name", containsInAnyOrder("name", "name2")))
-                .andExpect(jsonPath("$[*].item.description", containsInAnyOrder("description",
-                        "description2")));
+                .andExpect(jsonPath("$[*].status", containsInAnyOrder(WAITING, APPROVED)))
+                .andExpect(jsonPath("$[*].item.name", containsInAnyOrder(NAME, NAME_2)))
+                .andExpect(jsonPath("$[*].item.description", containsInAnyOrder(DESCRIPTION_2,
+                        DESCRIPTION)));
     }
 
     @Test
-    void getBookingsOwner() throws Exception  {
+    void getBookingsOwnerListTest() throws Exception  {
         when(bookingService.getBookingsOwner(anyLong(), any()))
                 .thenReturn(bookings);
 
-        mockMvc.perform(get("/bookings/owner")
-                        .header("X-Sharer-User-Id", 1)
+        mockMvc.perform(get(URL + "/owner")
+                        .header(SharerUserId, 1)
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[*].id", containsInAnyOrder(1, 2)))
-                .andExpect(jsonPath("$[*].status", containsInAnyOrder("WAITING", "APPROVED")))
-                .andExpect(jsonPath("$[*].item.name", containsInAnyOrder("name", "name2")))
-                .andExpect(jsonPath("$[*].item.description", containsInAnyOrder("description",
-                        "description2")));
+                .andExpect(jsonPath("$[*].status", containsInAnyOrder(WAITING, APPROVED)))
+                .andExpect(jsonPath("$[*].item.name", containsInAnyOrder(NAME, NAME_2)))
+                .andExpect(jsonPath("$[*].item.description", containsInAnyOrder(DESCRIPTION_2,
+                        DESCRIPTION)));
     }
 
     @Test
-    void getBookingsOwnerPage() throws Exception  {
+    void getBookingsOwnerListPageTest() throws Exception  {
         when(bookingService.getBookingsOwner(anyLong(), any(), anyInt(), anyInt()))
                 .thenReturn(bookings);
 
-        mockMvc.perform(get("/bookings/owner?from=0&size=10")
-                        .header("X-Sharer-User-Id", 1)
+        mockMvc.perform(get(URL + "/owner?from=0&size=10")
+                        .header(SharerUserId, 1)
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[*].id", containsInAnyOrder(1, 2)))
-                .andExpect(jsonPath("$[*].status", containsInAnyOrder("WAITING", "APPROVED")))
-                .andExpect(jsonPath("$[*].item.name", containsInAnyOrder("name", "name2")))
-                .andExpect(jsonPath("$[*].item.description", containsInAnyOrder("description",
-                        "description2")));
+                .andExpect(jsonPath("$[*].status", containsInAnyOrder(WAITING, APPROVED)))
+                .andExpect(jsonPath("$[*].item.name", containsInAnyOrder(NAME, NAME_2)))
+                .andExpect(jsonPath("$[*].item.description", containsInAnyOrder(DESCRIPTION_2,
+                        DESCRIPTION)));
     }
 }

@@ -44,15 +44,17 @@ class BookingServiceJPATest {
     private Item item2;
     private BookingDto bookingDto;
     private BookingDto bookingDto2;
-    private Booking booking;
+    private final String CHAIR = "Стул";
+    private final String CHAIR_2 = "Стул2";
+    private final String DESCRIPTION = "на четырех ножках";
 
     @BeforeEach
     void createTest() {
         user = userServiceJPA.saveUser(new User("pochta@mail.ru", "Valera"));
         user2 = userServiceJPA.saveUser(new User("pochta2@mail.ru", "Valera2"));
-        item = new Item(1L, "Стул", "на четырех ножках", true, null,
+        item = new Item(1L, CHAIR, DESCRIPTION, true, null,
                 user2, new ArrayList<>(), new ArrayList<>());
-        item2 = new Item(1L, "Стул2", "на четырех ножках 2", true, null,
+        item2 = new Item(1L, CHAIR_2, "на четырех ножках 2", true, null,
                 user2, new ArrayList<>(), new ArrayList<>());
         itemDto = itemServiceJPA.addNewItem(user.getId(), item);
         itemDto2 = itemServiceJPA.addNewItem(user.getId(), item2);
@@ -63,13 +65,13 @@ class BookingServiceJPATest {
     }
 
     @Test
-    void addBooking() {
+    void addNewBookingTest() {
         Booking newBooking = bookingServiceJPA.addBooking(user2.getId(), bookingDto);
         assertThat(newBooking.getId(), notNullValue());
         assertThat(newBooking.getStart(), notNullValue());
         assertThat(newBooking.getEnd(), notNullValue());
-        assertThat(newBooking.getItem().getName(), equalTo("Стул"));
-        assertThat(newBooking.getItem().getDescription(), equalTo("на четырех ножках"));
+        assertThat(newBooking.getItem().getName(), equalTo(CHAIR));
+        assertThat(newBooking.getItem().getDescription(), equalTo(DESCRIPTION));
         assertThat(newBooking.getItem().getAvailable(), equalTo(true));
         assertThat(newBooking.getStatus(), equalTo(BookingStatus.WAITING));
         bookingDto.setStart(LocalDateTime.now().minusHours(3));
@@ -81,15 +83,15 @@ class BookingServiceJPATest {
     }
 
     @Test
-    void setStatus() {
+    void setStatusTest() {
         Booking newBooking = bookingServiceJPA.addBooking(user2.getId(), bookingDto);
         Booking newBookingSet = bookingServiceJPA.setStatus(user.getId(),
                 newBooking.getId(), true);
         assertThat(newBookingSet.getId(), notNullValue());
         assertThat(newBookingSet.getStart(), notNullValue());
         assertThat(newBookingSet.getEnd(), notNullValue());
-        assertThat(newBookingSet.getItem().getName(), equalTo("Стул"));
-        assertThat(newBookingSet.getItem().getDescription(), equalTo("на четырех ножках"));
+        assertThat(newBookingSet.getItem().getName(), equalTo(CHAIR));
+        assertThat(newBookingSet.getItem().getDescription(), equalTo(DESCRIPTION));
         assertThat(newBookingSet.getItem().getAvailable(), equalTo(true));
         assertThat(newBookingSet.getStatus(), equalTo(BookingStatus.APPROVED));
         Booking newBooking2 = bookingServiceJPA.addBooking(user2.getId(), bookingDto2);
@@ -99,7 +101,7 @@ class BookingServiceJPATest {
     }
 
     @Test
-    void getById() {
+    void getByIdTest() {
         Booking newBooking = bookingServiceJPA.addBooking(user2.getId(), bookingDto);
         Throwable thrown = assertThrows(IllegalArgumentException.class, () -> {
             bookingServiceJPA.getById(100500, user.getId());
@@ -109,35 +111,35 @@ class BookingServiceJPATest {
         assertThat(booking3.getId(), notNullValue());
         assertThat(booking3.getStart(), notNullValue());
         assertThat(booking3.getEnd(), notNullValue());
-        assertThat(booking3.getItem().getName(), equalTo("Стул"));
-        assertThat(booking3.getItem().getDescription(), equalTo("на четырех ножках"));
+        assertThat(booking3.getItem().getName(), equalTo(CHAIR));
+        assertThat(booking3.getItem().getDescription(), equalTo(DESCRIPTION));
         assertThat(booking3.getItem().getAvailable(), equalTo(true));
         assertThat(booking3.getStatus(), equalTo(BookingStatus.WAITING));
         Booking booking4 = bookingServiceJPA.getById(newBooking.getId(), user2.getId());
         assertThat(booking4.getId(), notNullValue());
         assertThat(booking4.getStart(), notNullValue());
         assertThat(booking4.getEnd(), notNullValue());
-        assertThat(booking4.getItem().getName(), equalTo("Стул"));
-        assertThat(booking4.getItem().getDescription(), equalTo("на четырех ножках"));
+        assertThat(booking4.getItem().getName(), equalTo(CHAIR));
+        assertThat(booking4.getItem().getDescription(), equalTo(DESCRIPTION));
         assertThat(booking4.getItem().getAvailable(), equalTo(true));
         assertThat(booking4.getStatus(), equalTo(BookingStatus.WAITING));
     }
 
     @Test
-    void getById_2() {
+    void getById2Test() {
         Booking newBooking = bookingServiceJPA.addBooking(user2.getId(), bookingDto);
         Booking booking3 = bookingServiceJPA.getById(newBooking.getId());
         assertThat(booking3.getId(), notNullValue());
         assertThat(booking3.getStart(), notNullValue());
         assertThat(booking3.getEnd(), notNullValue());
-        assertThat(booking3.getItem().getName(), equalTo("Стул"));
-        assertThat(booking3.getItem().getDescription(), equalTo("на четырех ножках"));
+        assertThat(booking3.getItem().getName(), equalTo(CHAIR));
+        assertThat(booking3.getItem().getDescription(), equalTo(DESCRIPTION));
         assertThat(booking3.getItem().getAvailable(), equalTo(true));
         assertThat(booking3.getStatus(), equalTo(BookingStatus.WAITING));
     }
 
     @Test
-    void getBookings() {
+    void getBookingsListTest() {
         Booking newBooking = bookingServiceJPA.addBooking(user2.getId(), bookingDto);
         List<Booking> bookingList = bookingServiceJPA.getBookings(user2.getId(), RequestParameters.ALL);
         assertThat(bookingList.isEmpty(), equalTo(false));
@@ -154,7 +156,7 @@ class BookingServiceJPATest {
     }
 
     @Test
-    void getBookingsPage() {
+    void getBookingsPageTest() {
         Booking newBooking = bookingServiceJPA.addBooking(user2.getId(), bookingDto);
         List<Booking> bookingList = bookingServiceJPA.getBookings(user2.getId(), RequestParameters.ALL, 0, 1);
         assertThat(bookingList.isEmpty(), equalTo(false));
@@ -192,7 +194,7 @@ class BookingServiceJPATest {
 
 
     @Test
-    void getBookingsOwner() {
+    void getBookingsOwnerTest() {
         User newUser = userServiceJPA.saveUser(new User("pochta3@mail.ru", "Valera3"));
 
         Booking newBooking = bookingServiceJPA.addBooking(newUser.getId(), bookingDto);
@@ -214,7 +216,7 @@ class BookingServiceJPATest {
     }
 
     @Test
-    void getBookingsOwnerPage() {
+    void getBookingsOwnerPageTest() {
         User newUser = userServiceJPA.saveUser(new User("pochta3@mail.ru", "Valera3"));
         Booking newBooking = bookingServiceJPA.addBooking(newUser.getId(), bookingDto);
         List<Booking> bookings = bookingServiceJPA.getBookingsOwner(newUser.getId(),
@@ -241,14 +243,14 @@ class BookingServiceJPATest {
     }
 
     @Test
-    void lastBooking() {
+    void lastBookingTest() {
         Item itemLastBooking = new Item(itemDto.getId());
         Optional<Booking> optionalBooking = bookingServiceJPA.lastBooking(itemLastBooking);
         assertThat(optionalBooking.isEmpty(), equalTo(true));
     }
 
     @Test
-    void nextBooking() {
+    void nextBookingTest() {
         Item itemNextBooking = new Item(itemDto.getId());
         Optional<Booking> optionalBooking = bookingServiceJPA.nextBooking(itemNextBooking);
         assertThat(optionalBooking.isEmpty(), equalTo(true));

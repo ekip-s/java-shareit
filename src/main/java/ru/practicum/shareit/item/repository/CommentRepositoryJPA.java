@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface CommentRepositoryJPA extends JpaRepository<Comment, Long> {
 
-    List<Comment> findByItemOrderByCreated(Item item);
+       List<Comment> findByItemOrderByCreated(Item item);
 }

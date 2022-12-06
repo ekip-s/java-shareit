@@ -51,16 +51,44 @@ public interface BookingRepositoryJPA extends JpaRepository<Booking, Long> {
             "where i.owner=:user AND b.start < current_timestamp AND b.end > current_timestamp")
     Page<Booking> findCurrentBookingByItem(@Param("user") User user, Pageable pageable);
 
-    @Query(value = "select b from Booking b left join b.item AS i " +
+    @Query("select b from Booking b left join b.item AS i " +
             "where i.owner=:user AND b.end < current_timestamp")
-    Page<Booking> findPastBookingByItem(User user, Pageable pageable);
+    Page<Booking> findPastBookingByItem(@Param("user") User user, Pageable pageable);
 
-    @Query(value = "select b from Booking b left join b.item AS i " +
+    @Query("select b from Booking b left join b.item AS i " +
             "where i.owner=:user AND b.start > current_timestamp")
-    Page<Booking> findFutureBookingByItem(User user, Pageable pageable);
+    Page<Booking> findFutureBookingByItem(@Param("user") User user, Pageable pageable);
 
-    @Query(value = "select b from Booking b left join b.item AS i " +
+    @Query("select b from Booking b left join b.item AS i " +
             "where i.owner=:user AND b.status=:status")
-    Page<Booking> findBookingByItemByStatus(User user, BookingStatus status, Pageable pageable);
+    Page<Booking> findBookingByItemByStatus(@Param("user") User user, BookingStatus status, Pageable pageable);
 
+    @Query("select b from Booking b left join fetch b.item AS i " +
+            "where i.owner=:user ORDER BY b.start DESC")
+    List<Booking> getAllBookingByOwner(@Param("user") User user);
+
+    @Query("select b from Booking b left join fetch b.item AS i " +
+            "where i.owner=:user AND (b.start < current_timestamp AND b.end > current_timestamp)" +
+            " ORDER BY b.start DESC")
+    List<Booking> getCurrentBookingByOwner(@Param("user") User user);
+
+    @Query("select b from Booking b left join fetch b.item AS i " +
+            "where i.owner=:user AND b.end < current_timestamp ORDER BY b.start DESC")
+    List<Booking> getPastBookingByOwner(@Param("user") User user);
+
+    @Query("select b from Booking b left join fetch b.item AS i " +
+            "where i.owner=:user AND b.start > current_timestamp ORDER BY b.start DESC")
+    List<Booking> getFutureBookingByOwner(@Param("user") User user);
+
+    @Query("select b from Booking b left join fetch b.item AS i " +
+            "where i.owner=:user AND b.status=:status ORDER BY b.start DESC")
+    List<Booking> getBookingByOwnerAndStart(@Param("user") User user, @Param("status") BookingStatus status);
+
+    @Query("select b from Booking AS b where b.item=:item" +
+            " AND b.end < current_timestamp ORDER BY b.start DESC")
+    List<Booking> getLastBooking(@Param("item") Item item);
+
+    @Query("select b from Booking AS b where b.item=:item" +
+            " AND b.start > current_timestamp ORDER BY b.start DESC")
+    List<Booking> getNextBooking(@Param("item") Item item);
 }

@@ -13,7 +13,7 @@ import java.util.List;
 class UserTest {
 
     @Test
-    void testUserModel() {
+    void testUserModelTest() {
         User user = new User("test@mail.ru", "name");
         new User(1L);
 
@@ -26,7 +26,5 @@ class UserTest {
         comments.add(new Comment("comment"));
         List<ItemRequest> requests = new ArrayList<>();
         requests.add(new ItemRequest(1L));
-
-
     }
 }

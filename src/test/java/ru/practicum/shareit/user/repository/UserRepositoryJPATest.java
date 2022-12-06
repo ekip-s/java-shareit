@@ -13,18 +13,20 @@ import static org.hamcrest.Matchers.equalTo;
 
 @DataJpaTest
 @Import(ShareItApp.class)
+@Sql({"/test-schema.sql", "/test-data.sql"})
 class UserRepositoryJPATest {
+
+    private final String EMAIL = "valera@mail.ru";
 
     @Autowired
     private UserRepositoryJPA userRepositoryJPA;
 
     @Test
-    @Sql({"/test-schema.sql", "/test-data.sql"})
     void findByEmail() {
-        User user = userRepositoryJPA.findByEmail("valera@mail.ru").get(0);
+        User user = userRepositoryJPA.findByEmail(EMAIL).get(0);
 
         assertThat(user.getId(), equalTo(1L));
         assertThat(user.getName(), equalTo("ValeraTestJPA"));
-        assertThat(user.getEmail(), equalTo("valera@mail.ru"));
+        assertThat(user.getEmail(), equalTo(EMAIL));
     }
 }

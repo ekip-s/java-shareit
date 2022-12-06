@@ -6,6 +6,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.jdbc.Sql;
 import ru.practicum.shareit.ShareItApp;
 import ru.practicum.shareit.booking.model.Booking;
@@ -16,60 +17,53 @@ import static org.hamcrest.Matchers.equalTo;
 
 @DataJpaTest
 @Import(ShareItApp.class)
+@Sql({"/test-schema.sql", "/test-data.sql"})
 class BookingRepositoryJPATest {
 
     @Autowired
     private BookingRepositoryJPA bookingRepositoryJPA;
+    private Page<Booking> bookingPage;
+    private Page<Booking> bookingPage2;
+    private final User USER = new User(1L);
+    private final User USER2 = new User(2L);
+    private final Pageable page = PageRequest.of(0, 2);
+
 
     @Test
-    @Sql({"/test-schema.sql", "/test-data.sql"})
-    void findAllBookingByItemJpql() {
-        Page<Booking> bookingPage = bookingRepositoryJPA.findAllBookingByItemJpql(
-                new User(2L), PageRequest.of(0, 2));
+    void findAllBookingByItemJpqlTest() {
+        bookingPage = bookingRepositoryJPA.findAllBookingByItemJpql(USER2, page);
         assertThat(bookingPage.isEmpty(), equalTo(true));
-        Page<Booking> bookingPage2 = bookingRepositoryJPA.findAllBookingByItemJpql(
-                new User(1L), PageRequest.of(0, 2));
+        bookingPage2 = bookingRepositoryJPA.findAllBookingByItemJpql(USER, page);
         assertThat(bookingPage2.isEmpty(), equalTo(false));
     }
 
     @Test
-    @Sql({"/test-schema.sql", "/test-data.sql"})
-    void findCurrentBookingByItem() {
-        Page<Booking> bookingPage = bookingRepositoryJPA.findCurrentBookingByItem(
-                new User(1L), PageRequest.of(0, 2));
+    void findCurrentBookingByItemTest() {
+        bookingPage = bookingRepositoryJPA.findCurrentBookingByItem(USER, page);
         assertThat(bookingPage.isEmpty(), equalTo(false));
     }
 
     @Test
-    @Sql({"/test-schema.sql", "/test-data.sql"})
-    void findPastBookingByItem() {
-        Page<Booking> bookingPage = bookingRepositoryJPA.findPastBookingByItem(
-                new User(2L),  PageRequest.of(0, 2));
+    void findPastBookingByItemTest() {
+        bookingPage = bookingRepositoryJPA.findPastBookingByItem(USER2,  page);
         assertThat(bookingPage.isEmpty(), equalTo(true));
-        Page<Booking> bookingPage2 = bookingRepositoryJPA.findPastBookingByItem(
-                new User(1L),  PageRequest.of(0, 2));
+        bookingPage2 = bookingRepositoryJPA.findPastBookingByItem(USER,  page);
         assertThat(bookingPage2.isEmpty(), equalTo(false));
     }
 
     @Test
-    @Sql({"/test-schema.sql", "/test-data.sql"})
-    void findFutureBookingByItem() {
-        Page<Booking> bookingPage = bookingRepositoryJPA.findFutureBookingByItem(
-                new User(2L), PageRequest.of(0, 2));
+    void findFutureBookingByItemTest() {
+        bookingPage = bookingRepositoryJPA.findFutureBookingByItem(USER2, page);
         assertThat(bookingPage.isEmpty(), equalTo(true));
-        Page<Booking> bookingPage2 = bookingRepositoryJPA.findFutureBookingByItem(
-                new User(1L),  PageRequest.of(0, 2));
+        bookingPage2 = bookingRepositoryJPA.findFutureBookingByItem(USER,  page);
         assertThat(bookingPage2.isEmpty(), equalTo(false));
     }
 
     @Test
-    @Sql({"/test-schema.sql", "/test-data.sql"})
-    void findBookingByItemByStatus() {
-        Page<Booking> bookingPage = bookingRepositoryJPA.findBookingByItemByStatus(
-                new User(2L), BookingStatus.CANCELED, PageRequest.of(0, 2));
+    void findBookingByItemByStatusTest() {
+        bookingPage = bookingRepositoryJPA.findBookingByItemByStatus(USER2, BookingStatus.CANCELED, page);
         assertThat(bookingPage.isEmpty(), equalTo(true));
-        Page<Booking> bookingPage2 = bookingRepositoryJPA.findBookingByItemByStatus(
-                new User(1L), BookingStatus.CANCELED, PageRequest.of(0, 2));
+        bookingPage2 = bookingRepositoryJPA.findBookingByItemByStatus(USER, BookingStatus.CANCELED, page);
         assertThat(bookingPage2.isEmpty(), equalTo(false));
     }
 }

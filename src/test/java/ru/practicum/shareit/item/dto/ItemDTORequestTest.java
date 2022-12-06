@@ -5,31 +5,31 @@ import org.junit.jupiter.api.Test;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 class ItemDTORequestTest {
 
-    Item item;
+    private Item item;
+    private final String NAME = "Табуретка";
+    private final String USER_NAME = "name_user";
 
     @BeforeEach
     void createTest() {
         ItemRequest itemRequest = new ItemRequest(1L, "описание", LocalDateTime.now(), new ArrayList<>(),
                 new User(2L));
-        item = new Item(1L, "Табуретка", "табуретка на 4-ех ножках", true, itemRequest,
-                new User("test@mail.ru", "name_user"), new ArrayList<>(), new ArrayList<>());
+        item = new Item(1L, NAME, "табуретка на 4-ех ножках", true, itemRequest,
+                new User("test@mail.ru", USER_NAME), new ArrayList<>(), new ArrayList<>());
     }
 
     @Test
-    void toItemDTORequest() {
+    void toItemDTORequestTest() {
         ItemDTORequest itemDTORequest = new ItemDTORequest().toItemDTORequest(item);
 
         assertThat(itemDTORequest.getId(), equalTo(1L));
-        assertThat(itemDTORequest.getName(), equalTo("Табуретка"));
-        assertThat(itemDTORequest.getOwner().getName(), equalTo("name_user"));
+        assertThat(itemDTORequest.getName(), equalTo(NAME));
+        assertThat(itemDTORequest.getOwner().getName(), equalTo(USER_NAME));
     }
 }

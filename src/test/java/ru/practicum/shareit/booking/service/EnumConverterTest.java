@@ -22,7 +22,7 @@ class EnumConverterTest {
     private EnumConverter enumConverter;
 
     @Test
-    void convert() {
+    void convertTest() {
         RequestParameters requestParameters = enumConverter.convert("CURRENT");
         assertThat(requestParameters, equalTo(RequestParameters.CURRENT));
 

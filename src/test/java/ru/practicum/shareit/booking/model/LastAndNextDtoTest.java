@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class LastAndNextDtoTest {
 
     @Test
-    void getLastAndNextDto() {
+    void getLastAndNextDtoTest() {
         Booking booking = new Booking(1, LocalDateTime.now().plusHours(1), LocalDateTime.now().plusHours(6),
                 new Item("name", "description"), new User(1L), BookingStatus.WAITING);
         LastAndNextDto lastAndNextDto = new LastAndNextDto().getLastAndNextDto(booking);
