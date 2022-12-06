@@ -11,6 +11,8 @@ class BookingTest {
 
     @Test
     void truncateResponseTest() {
+        Booking booking2 = new Booking();
+        assertThat(booking2.getId(), equalTo(0L));
         Booking booking = new Booking(LocalDateTime.now().plusHours(1), LocalDateTime.now().plusHours(6),
                 new Item("name", "description"), new User(1L));
         booking = booking.truncateResponse();
