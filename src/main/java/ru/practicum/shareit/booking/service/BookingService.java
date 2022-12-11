@@ -19,6 +19,10 @@ public interface BookingService {
 
     List<Booking> getBookings(long userId, RequestParameters requestParameters);
 
+    List<Booking> getBookings(long userId, RequestParameters requestParameters, int from, int size);
+
+    List<Booking> getBookingsOwner(long userId, RequestParameters requestParameters, int from, int size);
+
     List<Booking> getBookingsOwner(long userId, RequestParameters requestParameters);
 
     Optional<Booking> lastBooking(Item item);

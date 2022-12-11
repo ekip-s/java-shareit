@@ -49,7 +49,7 @@ public class UserServiceJPA implements UserService {
         if (user.getName() != null) {
             initialUser.setName(user.getName());
         }
-        if (user.getEmail() != null) {
+        if (user.getEmail() != null && !user.getEmail().equals(initialUser.getEmail())) {
             checkEmail(user.getEmail());
             initialUser.setEmail(user.getEmail());
         }

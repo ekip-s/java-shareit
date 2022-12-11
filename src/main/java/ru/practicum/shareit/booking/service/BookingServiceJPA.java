@@ -1,10 +1,11 @@
 package ru.practicum.shareit.booking.service;
 
-
-import org.hibernate.Session;
-import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -23,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -31,10 +33,10 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class BookingServiceJPA implements BookingService {
 
-    BookingRepositoryJPA bookingRepositoryJPA;
-    ItemRepositoryJPA itemRepositoryJPA;
-    UserServiceJPA userServiceJPA;
-    EntityManager entityManager;
+    private final BookingRepositoryJPA bookingRepositoryJPA;
+    private final ItemRepositoryJPA itemRepositoryJPA;
+    private final UserServiceJPA userServiceJPA;
+    private final EntityManager entityManager;
 
     @Autowired
     public BookingServiceJPA(BookingRepositoryJPA bookingRepositoryJPA,
@@ -54,8 +56,7 @@ public class BookingServiceJPA implements BookingService {
         checkEntity(userId, optionalItem, bookingDto);
         checkDate(optionalItem.get(), bookingDto);
         User booker = userServiceJPA.getById(userId);
-        Booking booking = new Booking(bookingDto.getStart(), bookingDto.getEnd(), optionalItem.get(),
-                booker);
+        Booking booking = new Booking(bookingDto.getStart(), bookingDto.getEnd(), optionalItem.get(), booker);
         bookingRepositoryJPA.save(booking);
         return booking;
     }
@@ -93,26 +94,26 @@ public class BookingServiceJPA implements BookingService {
     @Override
     public List<Booking> getBookings(long userId, RequestParameters requestParameters) {
         User user = userServiceJPA.getById(userId);
-        LocalDateTime nowDT = LocalDateTime. now();
         List<Booking> bookings = new ArrayList<>();
+
         switch (requestParameters) {
             case ALL:
                 bookings = bookingRepositoryJPA.findByBookerOrderByStartDesc(user);
                 break;
-            case CURRENT: //текущие
+            case CURRENT:
                 bookings = bookingRepositoryJPA.findByBookerAndStartBeforeAndEndAfterOrderByStartDesc(user,
-                        nowDT, nowDT);
+                        LocalDateTime. now(), LocalDateTime. now());
                 break;
-            case PAST: //завершенные
-                bookings = bookingRepositoryJPA.findByBookerAndEndBeforeOrderByStartDesc(user, nowDT);
+            case PAST:
+                bookings = bookingRepositoryJPA.findByBookerAndEndBeforeOrderByStartDesc(user, LocalDateTime. now());
                 break;
-            case FUTURE: //будущие
-                bookings = bookingRepositoryJPA.findByBookerAndStartAfterOrderByStartDesc(user, nowDT);
+            case FUTURE:
+                bookings = bookingRepositoryJPA.findByBookerAndStartAfterOrderByStartDesc(user, LocalDateTime. now());
                 break;
-            case WAITING: //ожидающие
+            case WAITING:
                 bookings = bookingRepositoryJPA.findByBookerAndStatusOrderByStartDesc(user, BookingStatus.WAITING);
                 break;
-            case REJECTED: //отмененные
+            case REJECTED:
                 bookings = bookingRepositoryJPA.findByBookerAndStatusOrderByStartDesc(user, BookingStatus.REJECTED);
                 break;
         }
@@ -120,93 +121,116 @@ public class BookingServiceJPA implements BookingService {
     }
 
     @Override
-    public List<Booking> getBookingsOwner(long userId, RequestParameters requestParameters) {
+    public List<Booking> getBookings(long userId, RequestParameters requestParameters, int from, int size) {
         User user = userServiceJPA.getById(userId);
-        LocalDateTime nowDT = LocalDateTime. now();
-        List<Booking> bookings = new ArrayList<>();
-        Session session = entityManager.unwrap(Session.class);
-        Query query;
-
+        from = checkPaginationParamsAndReturnFrom(from, size);
+        Page<Booking> bookings = null;
         switch (requestParameters) {
             case ALL:
-                query = session.createQuery("select b from Booking b left join fetch b.item AS i " +
-                        "where i.owner=:user ORDER BY b.start DESC");
-                query.setParameter("user", user);
-                bookings = query.list();
+                bookings = bookingRepositoryJPA.findByBooker(user, getPage(from, size));
                 break;
-            case CURRENT: //текущие
-                query = session.createQuery("select b from Booking b left join fetch b.item AS i " +
-                        "where i.owner=:user AND (b.start < :nowDT AND b.end > :nowDT) ORDER BY b.start DESC");
-                query.setParameter("user", user);
-                query.setParameter("nowDT", nowDT);
-                bookings = query.list();
+            case CURRENT:
+                bookings = bookingRepositoryJPA.findByBookerAndStartBeforeAndEndAfter(user,
+                        LocalDateTime. now(), LocalDateTime. now(), getPage(from, size));
                 break;
-            case PAST: //завершенны
-                query = session.createQuery("select b from Booking b left join fetch b.item AS i " +
-                        "where i.owner=:user AND b.end < :nowDT ORDER BY b.start DESC");
-                query.setParameter("user", user);
-                query.setParameter("nowDT", nowDT);
-                bookings = query.list();
+            case PAST:
+                bookings = bookingRepositoryJPA.findByBookerAndEndBefore(user,
+                        LocalDateTime. now(), getPage(from, size));
                 break;
-            case FUTURE: //будущие
-                query = session.createQuery("select b from Booking b left join fetch b.item AS i " +
-                        "where i.owner=:user AND b.start > :nowDT ORDER BY b.start DESC");
-                query.setParameter("user", user);
-                query.setParameter("nowDT", nowDT);
-                bookings = query.list();
+            case FUTURE:
+                bookings = bookingRepositoryJPA.findByBookerAndStartAfter(user,
+                        LocalDateTime. now(), getPage(from, size));
                 break;
-            case WAITING: //ожидающие
-                query = session.createQuery("select b from Booking b left join fetch b.item AS i " +
-                        "where i.owner=:user AND b.status=:status ORDER BY b.start DESC");
-                query.setParameter("user", user);
-                query.setParameter("status", BookingStatus.WAITING);
-                bookings = query.list();
+            case WAITING:
+                bookings = bookingRepositoryJPA.findByBookerAndStatus(user, BookingStatus.WAITING, getPage(from, size));
                 break;
-            case REJECTED: //отмененные
-                query = session.createQuery("select b from Booking b left join fetch b.item AS i " +
-                        "where i.owner=:user AND b.status=:status ORDER BY b.start DESC");
-                query.setParameter("user", user);
-                query.setParameter("status", BookingStatus.REJECTED);
-                bookings = query.list();
+            case REJECTED:
+                bookings = bookingRepositoryJPA.findByBookerAndStatus(user, BookingStatus.REJECTED,
+                        getPage(from, size));
                 break;
         }
-        return bookings;
+        return truncateResponsePage(bookings);
+    }
+
+    @Override
+    public List<Booking> getBookingsOwner(long userId, RequestParameters requestParameters) {
+        User user = userServiceJPA.getById(userId);
+        switch (requestParameters) {
+            case CURRENT:
+                return bookingRepositoryJPA.getCurrentBookingByOwner(user);
+            case PAST:
+                return bookingRepositoryJPA.getPastBookingByOwner(user);
+            case FUTURE:
+                return bookingRepositoryJPA.getFutureBookingByOwner(user);
+            case WAITING:
+                return bookingRepositoryJPA.getBookingByOwnerAndStart(user, BookingStatus.WAITING);
+            case REJECTED:
+                return bookingRepositoryJPA.getBookingByOwnerAndStart(user, BookingStatus.REJECTED);
+            default:
+                return bookingRepositoryJPA.getAllBookingByOwner(user);
+        }
+    }
+
+    @Override
+    public List<Booking> getBookingsOwner(long userId, RequestParameters requestParameters, int from, int size) {
+        User user = userServiceJPA.getById(userId);
+        from = checkPaginationParamsAndReturnFrom(from, size);
+        Page<Booking> bookings = null;
+        switch (requestParameters) {
+            case ALL:
+                bookings = bookingRepositoryJPA.findAllBookingByItemJpql(user, getPage(from, size));
+                break;
+            case CURRENT:
+                bookings = bookingRepositoryJPA.findCurrentBookingByItem(user, getPage(from, size));
+                break;
+            case PAST:
+                System.out.println("Здесь: " + user);
+                bookings = bookingRepositoryJPA.findPastBookingByItem(user, getPage(from, size));
+                break;
+            case FUTURE:
+                bookings = bookingRepositoryJPA.findFutureBookingByItem(user, getPage(from, size));
+                break;
+            case WAITING:
+                bookings = bookingRepositoryJPA.findBookingByItemByStatus(user, BookingStatus.WAITING,
+                        getPage(from, size));
+                break;
+            case REJECTED:
+                bookings = bookingRepositoryJPA.findBookingByItemByStatus(user, BookingStatus.REJECTED,
+                        getPage(from, size));
+                break;
+        }
+        return truncateResponsePage(bookings);
     }
 
     @Override
     public Optional<Booking> lastBooking(Item item) {
-        Session session = entityManager.unwrap(Session.class);
-        Query query = session.createQuery("select b from Booking AS b where b.item=:item" +
-                " AND b.end <:now ORDER BY b.start DESC");
-        query.setParameter("item", item);
-        query.setParameter("now", LocalDateTime.now());
-        List<Booking> bookings = query.list();
-        return bookings.stream().findAny();
+        return bookingRepositoryJPA.getLastBooking(item).stream().findAny();
     }
 
     @Override
     public Optional<Booking> nextBooking(Item item) {
-        Session session = entityManager.unwrap(Session.class);
-        Query query = session.createQuery("select b from Booking AS b where b.item=:item" +
-                " AND b.start >:now ORDER BY b.start DESC");
-        query.setParameter("item", item);
-        query.setParameter("now", LocalDateTime.now());
-        List<Booking> bookings = query.list();
-        return bookings.stream().findAny();
+        return bookingRepositoryJPA.getNextBooking(item).stream().findAny();
     }
 
     private List<Booking> truncateResponse(List<Booking> bookings) {
-        for (Booking b: bookings) {
-            b.truncateResponse();
-        }
-        return bookings;
+        return bookings.stream()
+                .map(i -> i.truncateResponse())
+                .collect(Collectors.toList());
     }
+
+    private List<Booking> truncateResponsePage(Page<Booking> bookings) {
+        return bookings.stream()
+                    .map(i -> i.truncateResponse())
+                    .collect(Collectors.toList());
+    }
+
+
 
     private void checkEntity(long userId, Optional<Item> optionalItem, BookingDto booking) {
         if (optionalItem.isEmpty()) {
             throw new IllegalArgumentException("Такого товара нет");
         } else if (userId == optionalItem.get().getOwner().getId()) {
-            throw new IllegalArgumentException("Нельзя забронировать не свой товар.");
+            throw new IllegalArgumentException("Нельзя забронировать свой товар.");
         } else if (!optionalItem.get().getAvailable()) {
             throw new ConflictException("Товар сейчас не доступен, выберите другой");
         } else if (booking.getStart().isAfter(booking.getEnd())) {
@@ -214,6 +238,14 @@ public class BookingServiceJPA implements BookingService {
         }
     }
 
+    private int checkPaginationParamsAndReturnFrom(int from, int size) {
+        if (from < 0) {
+            throw new ConflictException("Параметр from не может быть отрицательным.");
+        } else if (size < 1) {
+            throw new ConflictException("Параметр size должен быть меньше нуля.");
+        }
+        return from / size;
+    }
 
     private Booking checkBooking(Optional<Booking> booking) {
         if (booking.isEmpty()) {
@@ -242,5 +274,9 @@ public class BookingServiceJPA implements BookingService {
         if (bookerId != userID && ownerId != userID) {
             throw new IllegalArgumentException("Бронь на другом пользователем.");
         }
+    }
+
+    private Pageable getPage(int from, int size) {
+        return PageRequest.of(from, size, Sort.by("start").descending());
     }
 }
