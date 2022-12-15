@@ -22,7 +22,7 @@ public class ItemController {
     public ResponseEntity<Object> get(@RequestHeader(SHARER_USER_ID) long userId,
                                       @RequestParam(required = false) Integer from,
                                       @RequestParam(required = false) Integer size) {
-        idCheck(userId);
+        checkId(userId);
         if (from == null || size == null) {
             return itemClient.getItems(userId);
         } else {
@@ -34,8 +34,8 @@ public class ItemController {
     @GetMapping("/{itemId}")
     public ResponseEntity<Object> getById(@RequestHeader(SHARER_USER_ID) Long userId,
                            @PathVariable Long itemId) {
-        idCheck(userId);
-        idCheck(itemId);
+        checkId(userId);
+        checkId(itemId);
         return itemClient.getById(userId, itemId);
     }
 
@@ -43,7 +43,7 @@ public class ItemController {
     public ResponseEntity<Object> add(@RequestHeader(SHARER_USER_ID) Long userId,
                        @RequestBody @Valid Item item) {
         log.info("Получен POST запрос к эндпоинту: '/items', Строка параметров запроса: {}", item.toString());
-        idCheck(userId);
+        checkId(userId);
         return itemClient.addNewItem(userId, item);
     }
 
@@ -51,8 +51,8 @@ public class ItemController {
     public ResponseEntity<Object> update(@RequestHeader(SHARER_USER_ID) Long userId,
                        @RequestBody Item item, @PathVariable Long itemId) {
         log.info("Получен PATCH запрос к эндпоинту: '/items', Строка параметров запроса: {}", item.toString());
-        idCheck(userId);
-        idCheck(itemId);
+        checkId(userId);
+        checkId(itemId);
         return itemClient.updateItem(userId, item, itemId);
     }
 
@@ -61,7 +61,7 @@ public class ItemController {
                                     @RequestParam(required = false, defaultValue = "") String text,
                                     @RequestParam(required = false) Integer from,
                                     @RequestParam(required = false) Integer size) {
-        idCheck(userId);
+        checkId(userId);
         if (from == null || size == null) {
             return itemClient.searchItem(userId, text);
         } else {
@@ -75,8 +75,8 @@ public class ItemController {
                            @PathVariable Long itemId) {
         log.info("Получен DELETE запрос к эндпоинту: '/items', Строка параметров запроса: userId={}, itemId={}",
                 userId, itemId);
-        idCheck(userId);
-        idCheck(itemId);
+        checkId(userId);
+        checkId(itemId);
         return itemClient.deleteItem(userId, itemId);
     }
 
@@ -86,15 +86,16 @@ public class ItemController {
                                  @RequestBody @Valid Comment comment) {
         log.info("Получен POST запрос к эндпоинту: '/items/itemId={}/comment'," +
                 " Строка параметров запроса: userId={}, comment={}", itemId, userId, comment);
-        idCheck(userId);
-        idCheck(itemId);
+        checkId(userId);
+        checkId(itemId);
         return itemClient.addComment(userId, itemId, comment);
     }
 
-    private void idCheck(long id) {
+    private void checkId(long id) {
         if (id < 1) {
             throw new IllegalArgumentException("Ошибка валидации: id не может быть меньше 1.");
         }
+
     }
 
     private Integer checkPaginationParams(int from, int size) {

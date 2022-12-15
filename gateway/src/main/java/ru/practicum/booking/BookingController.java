@@ -23,7 +23,7 @@ public class BookingController {
     public ResponseEntity<Object> addBooking(@RequestHeader(SHARER_USER_ID) Long userId,
                                              @RequestBody @Valid BookingDto bookingDto) {
         log.info("Получен POST запрос к эндпоинту: '/bookings', Строка параметров запроса: {}", bookingDto.toString());
-        idCheck(userId);
+        checkId(userId);
         return bookingClient.addBooking(userId, bookingDto);
     }
 
@@ -32,16 +32,16 @@ public class BookingController {
                              @PathVariable Long bookingId,@RequestParam Boolean approved) {
         log.info("Получен PATCH запрос к эндпоинту: '/bookings', Строка параметров запроса:" +
                 " userId = {}, bookingId = {}, approved = {}", userId, bookingId, approved);
-        idCheck(userId);
-        idCheck(bookingId);
+        checkId(userId);
+        checkId(bookingId);
         return bookingClient.setStatus(userId, bookingId, approved);
     }
 
     @GetMapping("/{bookingId}")
     public ResponseEntity<Object> getBookingById(@RequestHeader(SHARER_USER_ID) Long userId,
                                   @PathVariable Long bookingId) {
-        idCheck(userId);
-        idCheck(bookingId);
+        checkId(userId);
+        checkId(bookingId);
         return bookingClient.getById(bookingId, userId);
     }
 
@@ -51,7 +51,7 @@ public class BookingController {
                                      RequestParameters state,
                                      @RequestParam(required = false) Integer from,
                                      @RequestParam(required = false) Integer size) {
-        idCheck(userId);
+        checkId(userId);
         if (from == null || size == null) {
             return bookingClient.getBookings(userId, state);
         } else {
@@ -66,7 +66,7 @@ public class BookingController {
                                           RequestParameters state,
                                           @RequestParam(required = false) Integer from,
                                           @RequestParam(required = false) Integer size) {
-        idCheck(userId);
+        checkId(userId);
         if (from == null || size == null) {
             return bookingClient.getBookingsOwner(userId, state);
         } else {
@@ -75,7 +75,7 @@ public class BookingController {
         }
     }
 
-    private void idCheck(long id) {
+    private void checkId(long id) {
         if (id < 1) {
             throw new IllegalArgumentException("Ошибка валидации: id не может быть меньше 1.");
         }

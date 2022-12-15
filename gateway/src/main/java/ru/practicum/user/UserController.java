@@ -23,7 +23,7 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<Object> getById(@PathVariable Long userId) {
-        idCheck(userId);
+        checkId(userId);
         return userClient.getById(userId);
     }
 
@@ -36,18 +36,18 @@ public class UserController {
     @PatchMapping("/{userId}")
     public ResponseEntity<Object> updateUser(@RequestBody UserDTO user, @PathVariable Long userId) {
         log.info("Получен PATCH запрос к эндпоинту: '/users', Строка параметров запроса: {}", user.toString());
-        idCheck(userId);
+        checkId(userId);
         return userClient.updateUser(user, userId);
     }
 
     @DeleteMapping("/{userId}")
     public ResponseEntity<Object> deleteUser(@PathVariable Long userId) {
         log.info("Получен DELETE запрос к эндпоинту: '/users', userId: {}", userId);
-        idCheck(userId);
+        checkId(userId);
         return userClient.deleteUser(userId);
     }
 
-    private void idCheck(long id) {
+    private void checkId(long id) {
         if (id < 1) {
             throw new IllegalArgumentException("Ошибка валидации: id не может быть меньше 1.");
         }

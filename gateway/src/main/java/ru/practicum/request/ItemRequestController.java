@@ -24,13 +24,13 @@ public class ItemRequestController {
                                                 @RequestBody @Valid ItemRequest itemRequest) {
         log.info("Получен POST запрос к эндпоинту: '/requests', Строка параметров запроса: {}, пользователь: {}",
                 itemRequest.toString(), userId);
-        idCheck(userId);
+        checkId(userId);
         return itemRequestClient.addNewRequest(itemRequest, userId);
     }
 
     @GetMapping
     public ResponseEntity<Object> myRequest(@RequestHeader(SHARER_USER_ID) Long userId) {
-        idCheck(userId);
+        checkId(userId);
         return itemRequestClient.myRequest(userId);
     }
 
@@ -38,7 +38,7 @@ public class ItemRequestController {
     public ResponseEntity<Object> strangerRequest(@RequestHeader(SHARER_USER_ID) Long userId,
                                                 @RequestParam(required = false) Integer from,
                                                 @RequestParam(required = false) Integer size) {
-        idCheck(userId);
+        checkId(userId);
         if (from == null || size == null) {
             return itemRequestClient.strangerRequest(userId);
         } else {
@@ -50,12 +50,12 @@ public class ItemRequestController {
     @GetMapping("/{requestId}")
     public ResponseEntity<Object> requestById(@RequestHeader(SHARER_USER_ID) Long userId,
                                               @PathVariable Long requestId) {
-        idCheck(userId);
-        idCheck(requestId);
+        checkId(userId);
+        checkId(requestId);
         return itemRequestClient.requestById(userId, requestId);
     }
 
-    private void idCheck(long id) {
+    private void checkId(long id) {
         if (id < 1) {
             throw new IllegalArgumentException("Ошибка валидации: id не может быть меньше 1.");
         }
